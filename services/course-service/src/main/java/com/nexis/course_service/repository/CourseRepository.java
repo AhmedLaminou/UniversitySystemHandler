@@ -14,8 +14,6 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
     List<Course> findByInstructor(String instructor);
     
     List<Course> findByStatus(String status);
-    
-    List<Course> findByDayOfWeek(String dayOfWeek);
-    
+        
     List<Course> findBySemester(String semester);
 }
