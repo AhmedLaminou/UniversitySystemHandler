@@ -1,0 +1,68 @@
+@baseUrl = http://localhost:3000
+@authUrl = http://localhost:8080/api/auth
+@contentType = application/json
+
+### 1. Register a new User (Auth Service)
+# Note: Default role is STUDENT. To test Admin features, you may need to manually update the role in MongoDB to 'ADMIN'.
+POST {{authUrl}}/register
+Content-Type: {{contentType}}
+
+{
+    "username": "testadmin",
+    "password": "password123",
+    "email": "admin@test.com",
+    "firstName": "Test",
+    "lastName": "Admin",
+    "phoneNumber": "1234567890",
+    "address": "123 Test St"
+}
+
+### 2. Login to get Token (Auth Service)
+# Copy the 'accessToken' from the response and paste it below in the @token variable
+POST {{authUrl}}/login
+Content-Type: {{contentType}}
+
+{
+    "username": "testadmin",
+    "password": "password123"
+}
+
+### Variable for Token (Replace with your actual token after login)
+@token = YOUR_ACCESS_TOKEN_HERE
+
+### 3. Get All Students (Requires Login)
+GET {{baseUrl}}/students
+Authorization: Bearer {{token}}
+
+### 4. Create a Student (Requires ADMIN Role)
+POST {{baseUrl}}/students
+Content-Type: {{contentType}}
+Authorization: Bearer {{token}}
+
+{
+    "studentId": "S1001",
+    "firstName": "Alice",
+    "lastName": "Smith",
+    "email": "alice.smith@university.com",
+    "enrollmentDate": "2023-09-15"
+}
+
+### 5. Get Student by ID
+GET {{baseUrl}}/students/S1001
+Authorization: Bearer {{token}}
+
+### 6. Update Student (Requires ADMIN Role)
+PUT {{baseUrl}}/students/S1001
+Content-Type: {{contentType}}
+Authorization: Bearer {{token}}
+
+{
+    "firstName": "Alice",
+    "lastName": "Cooper",
+    "email": "alice.cooper@university.com",
+    "isActive": true
+}
+
+### 7. Delete Student (Requires ADMIN Role)
+DELETE {{baseUrl}}/students/S1001
+Authorization: Bearer {{token}}
