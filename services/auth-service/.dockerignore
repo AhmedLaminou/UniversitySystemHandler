@@ -1,0 +1,67 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+*.iml
+*.iws
+*.ipr
+.classpath
+.project
+.settings
+
+# Build
+target
+*.class
+*.jar
+*.zip
+*.tar.gz
+build
+dist
+
+# Logs
+logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Maven
+.m2
+*.pom
+*.xml.bak
+
+# Dev tools
+node_modules
+npm-debug.log
+.env.local
+.env.*.local
+
+# Docker
+Dockerfile
+docker-compose.yml
+docker-compose.override.yml
+.dockerignore
+
+# CI/CD
+.github
+.gitlab-ci.yml
+.travis.yml
+Jenkinsfile
+
+# Documentation
+README.md
+docs
+*.md
+
+# Tests
+src/test
+.mvn
+mvnw
+mvnw.cmd
