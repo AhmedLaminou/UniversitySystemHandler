@@ -1,14 +1,14 @@
-package com.nexis.course_service.entity;
+package com.nexis.course_service.model;
 
-public enum ScheduleStatus {
+public enum CourseStatus {
     ACTIVE("Actif"),
     INACTIVE("Inactif"),
     CANCELLED("Annulé"),
-    RESCHEDULED("Reporté");
+    COMPLETED("Complété");
     
     private final String displayName;
 
-    ScheduleStatus(String displayName) {
+    CourseStatus(String displayName) {
         this.displayName = displayName;
     }
 

@@ -1,4 +1,4 @@
-package com.nexis.course_service.entity;
+package com.nexis.course_service.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -32,18 +32,6 @@ public class Course {
     @Column(nullable = false)
     private Integer credits;
     
-    // @Column(nullable = false)
-    // private String room;
-    
-    // @Column(nullable = false)
-    // private String dayOfWeek;
-    
-    // @Column(nullable = false)
-    // private String startTime;
-    
-    // @Column(nullable = false)
-    // private String endTime;
-    
     @Column(nullable = false)
     private String semester;
     
@@ -52,9 +40,6 @@ public class Course {
     
     @Column(nullable = false)
     private Integer enrolledStudents = 0;
-    
-    // @Column(nullable = false)
-    // private String status = "ACTIVE";
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

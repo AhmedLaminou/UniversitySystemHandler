@@ -1,7 +1,7 @@
 package com.nexis.course_service.soap;
 
-import com.nexis.course_service.entity.Course;
-import com.nexis.course_service.entity.Schedule;
+import com.nexis.course_service.model.Course;
+import com.nexis.course_service.model.Schedule;
 import com.nexis.course_service.service.CourseService;
 import com.nexis.course_service.service.ScheduleService;
 import lombok.RequiredArgsConstructor;

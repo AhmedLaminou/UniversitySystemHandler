@@ -1,8 +1,8 @@
 package com.nexis.course_service.service;
 
-import com.nexis.course_service.entity.Course;
-import com.nexis.course_service.entity.Schedule;
-import com.nexis.course_service.entity.ScheduleStatus;
+import com.nexis.course_service.model.Course;
+import com.nexis.course_service.model.Schedule;
+import com.nexis.course_service.model.ScheduleStatus;
 import com.nexis.course_service.repository.CourseRepository;
 import com.nexis.course_service.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;

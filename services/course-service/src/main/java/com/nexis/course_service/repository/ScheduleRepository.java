@@ -1,8 +1,10 @@
 package com.nexis.course_service.repository;
 
-import com.nexis.course_service.entity.Schedule;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import com.nexis.course_service.model.Schedule;
+
 import java.util.List;
 
 @Repository

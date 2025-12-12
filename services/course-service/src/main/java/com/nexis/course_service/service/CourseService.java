@@ -1,6 +1,6 @@
 package com.nexis.course_service.service;
 
-import com.nexis.course_service.entity.Course;
+import com.nexis.course_service.model.Course;
 import com.nexis.course_service.repository.CourseRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -1,4 +1,4 @@
-package com.nexis.course_service.entity;
+package com.nexis.course_service.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -38,9 +38,6 @@ public class Schedule {
     
     @Column(nullable = false)
     private Integer capacity;  
-    
-    // @Column(nullable = false)
-    // private String status = "ACTIVE";
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -50,9 +47,7 @@ public class Schedule {
     private LocalDateTime createdAt;
     
     @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
-
-    
+    private LocalDateTime updatedAt;    
     
     @PrePersist
     protected void onCreate() {
