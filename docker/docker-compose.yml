@@ -1,0 +1,171 @@
+version: "3.8"
+
+services:
+  # 🗄️ MySQL Database
+  mysql-db:
+    image: mysql:8.0
+    container_name: university-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: university_db
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - university-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  # 🐘 PostgreSQL Database
+  postgres-db:
+    image: postgres:14
+    container_name: university-postgres
+    environment:
+      POSTGRES_DB: university_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - university-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      timeout: 20s
+      retries: 10
+
+  # 🔐 AUTH-SERVICE (Port 8080)
+  auth-service:
+    build:
+      context: ./services/auth-service
+      dockerfile: Dockerfile
+    container_name: auth-service
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/university_db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      JWT_SECRET: MyVerySecureSecretKeyForAuthenticationJWTTokens2024WithEnoughCharacters
+    ports:
+      - "8080:8080"
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+    networks:
+      - university-network
+    restart: unless-stopped
+
+  # 👥 STUDENT-SERVICE (Port 3000 - Node.js)
+  student-service:
+    build:
+      context: ./services/student-service
+      dockerfile: Dockerfile
+    container_name: student-service
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://postgres:postgres@postgres-db:5432/university_db
+      JWT_SECRET: MyVerySecureSecretKeyForAuthenticationJWTTokens2024WithEnoughCharacters
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+    networks:
+      - university-network
+    restart: unless-stopped
+
+  # 📚 COURSE-SERVICE (Port 8082 - SOAP + Java)
+  course-service:
+    build:
+      context: ./services/course-service
+      dockerfile: Dockerfile
+    container_name: course-service
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/university_db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      JWT_SECRET: MyVerySecureSecretKeyForAuthenticationJWTTokens2024WithEnoughCharacters
+    ports:
+      - "8082:8082"
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+    networks:
+      - university-network
+    restart: unless-stopped
+
+  # 📊 GRADE-SERVICE (Port 8000 - Python FastAPI)
+  grade-service:
+    build:
+      context: ./services/grade-service
+      dockerfile: Dockerfile
+    container_name: grade-service
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres-db:5432/university_db
+      JWT_SECRET: MyVerySecureSecretKeyForAuthenticationJWTTokens2024WithEnoughCharacters
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+    networks:
+      - university-network
+    restart: unless-stopped
+
+  # 💳 BILLING-SERVICE (Port 8081 - .NET Core SOAP)
+  billing-service:
+    build:
+      context: ./services/billing-service
+      dockerfile: Dockerfile
+    container_name: billing-service
+    environment:
+      ConnectionStrings__DefaultConnection: Server=postgres-db;Port=5432;Database=university_db;User Id=postgres;Password=postgres;
+      JWT__Secret: MyVerySecureSecretKeyForAuthenticationJWTTokens2024WithEnoughCharacters
+    ports:
+      - "8081:8081"
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+    networks:
+      - university-network
+    restart: unless-stopped
+
+  # 🚀 API GATEWAY (Port 9090)
+  api-gateway:
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    container_name: api-gateway
+    environment:
+      SPRING_CLOUD_GATEWAY_ROUTES_0_ID: auth-service
+      SPRING_CLOUD_GATEWAY_ROUTES_0_URI: http://auth-service:8080
+      SPRING_CLOUD_GATEWAY_ROUTES_1_ID: student-service
+      SPRING_CLOUD_GATEWAY_ROUTES_1_URI: http://student-service:3000
+      SPRING_CLOUD_GATEWAY_ROUTES_2_ID: course-service
+      SPRING_CLOUD_GATEWAY_ROUTES_2_URI: http://course-service:8082
+      SPRING_CLOUD_GATEWAY_ROUTES_3_ID: grade-service
+      SPRING_CLOUD_GATEWAY_ROUTES_3_URI: http://grade-service:8000
+      SPRING_CLOUD_GATEWAY_ROUTES_4_ID: billing-service
+      SPRING_CLOUD_GATEWAY_ROUTES_4_URI: http://billing-service:8081
+    ports:
+      - "9090:9090"
+    depends_on:
+      - auth-service
+      - student-service
+      - course-service
+      - grade-service
+      - billing-service
+    networks:
+      - university-network
+    restart: unless-stopped
+
+networks:
+  university-network:
+    driver: bridge
+
+volumes:
+  mysql-data:
+  postgres-data:

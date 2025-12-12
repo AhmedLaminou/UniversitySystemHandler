@@ -50,20 +50,35 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        log.info("🔐 Configuring Spring Security for Auth-Service");
+        
         http
             .csrf(csrf -> csrf.disable())
+            
             .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            
             .authorizeHttpRequests(authz -> authz
-                .requestMatchers("/api/auth/register").permitAll()
-                .requestMatchers("/api/auth/login").permitAll()
-                .requestMatchers("/api/auth/refresh").permitAll()
-                .requestMatchers("/h2-console/**").permitAll()
-                .requestMatchers("/actuator/**").permitAll()
+                .requestMatchers("/register").permitAll()    
+                .requestMatchers("/login").permitAll()       
+                .requestMatchers("/refresh").permitAll()    
+                
+                .requestMatchers("/me").authenticated()      
+                .requestMatchers("/profile").authenticated() 
+                .requestMatchers("/logout").authenticated()  
+                
+                .requestMatchers("/h2-console/**").permitAll()       
+                .requestMatchers("/actuator/**").permitAll()          
+                .requestMatchers("/swagger-ui/**").permitAll()       
+                .requestMatchers("/v3/api-docs/**").permitAll()     
+                
                 .anyRequest().authenticated()
             )
+            
             .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()))
+            
             .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
+        log.info("✅ Spring Security configured successfully");
         return http.build();
     }
 }
@@ -94,20 +109,29 @@ class JwtAuthenticationFilter extends OncePerRequestFilter {
                         userDetails, null, userDetails.getAuthorities()
                     );
 
+                // Ajouter au contexte de sécurité
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+                
+                log.debug("✅ JWT validated for user: {}", username);
+            } else if (token != null) {
+                log.warn("❌ Invalid JWT token");
             }
+            
         } catch (Exception e) {
-            log.error("Erreur authentification JWT: {}", e.getMessage());
+            log.error("❌ JWT authentication error: {}", e.getMessage());
         }
 
         filterChain.doFilter(request, response);
     }
 
+
     private String extractToken(HttpServletRequest request) {
         String authHeader = request.getHeader("Authorization");
+        
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             return authHeader.substring(7);
         }
+        
         return null;
     }
 }
