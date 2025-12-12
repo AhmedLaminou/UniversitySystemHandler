@@ -1,0 +1,69 @@
+spring:
+  application:
+    name: api-gateway
+
+  cloud:
+    gateway:
+      routes:
+        - id: auth-service
+          uri: http://localhost:8081
+          predicates:
+            - Path=/api/auth/**
+          filters:
+            - StripPrefix=2
+
+        - id: student-service
+          uri: http://localhost:3001
+          predicates:
+            - Path=/api/students/**
+          filters:
+            - StripPrefix=2
+
+        - id: course-service
+          uri: http://localhost:8082
+          predicates:
+            - Path=/api/ws/course/**
+          filters:
+            - StripPrefix=0
+
+        - id: grade-service
+          uri: http://localhost:3002
+          predicates:
+            - Path=/api/grades/**
+          filters:
+            - StripPrefix=2
+
+        - id: billing-service
+          uri: http://localhost:3003
+          predicates:
+            - Path=/api/billing/**
+          filters:
+            - StripPrefix=2
+
+      globalcors:
+        corsConfigurations:
+          "[/**]":
+            allowedOrigins: "*"
+            allowedMethods: GET,POST,PUT,DELETE,OPTIONS,PATCH
+            allowedHeaders: "*"
+            allowCredentials: false
+            maxAge: 3600
+
+app:
+  jwt:
+    secret: MyVerySecureSecretKeyForAuthenticationJWTTokens2024WithEnoughCharacters
+    expiration: 86400000
+
+server:
+  port: 9090
+  servlet:
+    context-path: /
+
+logging:
+  level:
+    root: INFO
+    com.nexis.api_gateway: DEBUG
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.security: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
