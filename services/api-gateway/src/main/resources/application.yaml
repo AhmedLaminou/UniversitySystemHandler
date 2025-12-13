@@ -5,36 +5,41 @@ spring:
   cloud:
     gateway:
       routes:
+        # ========== AUTH SERVICE ==========
         - id: auth-service
-          uri: http://localhost:8081
+          uri: http://auth-service:8080
           predicates:
             - Path=/api/auth/**
           filters:
             - StripPrefix=2
 
+        # ========== STUDENT SERVICE ==========
         - id: student-service
-          uri: http://localhost:3001
+          uri: http://student-service:3000
           predicates:
             - Path=/api/students/**
           filters:
             - StripPrefix=2
 
+        # ========== COURSE SERVICE (SOAP) ==========
         - id: course-service
-          uri: http://localhost:8082
+          uri: http://course-service:8082
           predicates:
             - Path=/api/ws/course/**
           filters:
             - StripPrefix=0
 
+        # ========== GRADE SERVICE ==========
         - id: grade-service
-          uri: http://localhost:3002
+          uri: http://grade-service:8000
           predicates:
             - Path=/api/grades/**
           filters:
             - StripPrefix=2
 
+        # ========== BILLING SERVICE ==========
         - id: billing-service
-          uri: http://localhost:3003
+          uri: http://billing-service:8081
           predicates:
             - Path=/api/billing/**
           filters:
@@ -44,26 +49,22 @@ spring:
         corsConfigurations:
           "[/**]":
             allowedOrigins: "*"
-            allowedMethods: GET,POST,PUT,DELETE,OPTIONS,PATCH
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+              - PATCH
             allowedHeaders: "*"
             allowCredentials: false
             maxAge: 3600
 
+server:
+  port: 9090
+
+# Configuration JWT
 app:
   jwt:
     secret: MyVerySecureSecretKeyForAuthenticationJWTTokens2024WithEnoughCharacters
     expiration: 86400000
-
-server:
-  port: 9090
-  servlet:
-    context-path: /
-
-logging:
-  level:
-    root: INFO
-    com.nexis.api_gateway: DEBUG
-    org.springframework.cloud.gateway: DEBUG
-    org.springframework.security: DEBUG
-  pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
