@@ -49,7 +49,8 @@ public class AuthService {
         user.setEnabled(true);
 
         User savedUser = userRepository.save(user);
-        log.info("Nouvel utilisateur enregistré: {} avec le rôle STUDENT", request.getUsername());
+        log.info("✅ Nouvel utilisateur enregistré: {} | Rôle: STUDENT", 
+            request.getUsername());
 
         return mapToUserDto(savedUser);
     }
@@ -63,11 +64,13 @@ public class AuthService {
         );
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        String accessToken = jwtTokenProvider.generateToken(authentication);
-        String refreshToken = jwtTokenProvider.generateTokenFromUsername(request.getUsername());
-
+        
         User user = userRepository.findByUsername(request.getUsername())
             .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+
+        // ✅ CHANGEMENT: Utiliser generateTokenFromUser au lieu de generateToken
+        String accessToken = jwtTokenProvider.generateTokenFromUser(user);
+        String refreshToken = jwtTokenProvider.generateTokenFromUsername(request.getUsername());
 
         AuthResponse response = new AuthResponse();
         response.setAccessToken(accessToken);
@@ -75,7 +78,9 @@ public class AuthService {
         response.setExpiresIn(jwtTokenProvider.getJwtExpiration());
         response.setUser(mapToUserDto(user));
 
-        log.info("Connexion réussie pour: {}", request.getUsername());
+        log.info("✅ Connexion réussie: {} | Rôle: {}", 
+            request.getUsername(), user.getRole().name());
+        
         return response;
     }
 
@@ -89,16 +94,20 @@ public class AuthService {
         }
 
         String username = jwtTokenProvider.getUsernameFromToken(token);
-        String newAccessToken = jwtTokenProvider.generateTokenFromUsername(username);
-
+        
         User user = userRepository.findByUsername(username)
             .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+
+        // ✅ CHANGEMENT: Utiliser generateTokenFromUser
+        String newAccessToken = jwtTokenProvider.generateTokenFromUser(user);
 
         AuthResponse response = new AuthResponse();
         response.setAccessToken(newAccessToken);
         response.setRefreshToken(token);
         response.setExpiresIn(jwtTokenProvider.getJwtExpiration());
         response.setUser(mapToUserDto(user));
+
+        log.info("✅ Token rafraîchi pour: {}", username);
 
         return response;
     }
@@ -136,6 +145,7 @@ public class AuthService {
         user.setUpdatedAt(System.currentTimeMillis());
 
         User updated = userRepository.save(user);
+        log.info("✅ Profil mis à jour: {}", username);
         return mapToUserDto(updated);
     }
 
