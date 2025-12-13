@@ -25,7 +25,6 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
     @Value("${app.jwt.secret:MyVerySecureSecretKeyForAuthenticationJWTTokens2024WithEnoughCharacters}")
     private String secretKey;
 
-    // Routes publiques - pas besoin de JWT
     private static final List<String> PUBLIC_ROUTES = Arrays.asList(
         "/api/auth/register",
         "/api/auth/login",
@@ -42,29 +41,25 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
             ServerHttpRequest request = exchange.getRequest();
             String path = request.getURI().getPath();
 
-            log.info("🔍 Incoming request: {} {}", request.getMethod(), path);
+            log.info("🔍 JWT Filter - Path: {} {}", request.getMethod(), path);
 
-            // ✅ Routes publiques - pas de vérification JWT
             if (isPublicRoute(path)) {
                 log.info("✅ Public route - JWT not required: {}", path);
                 return chain.filter(exchange);
             }
 
-            // ✅ Récupérer le token
             String token = extractToken(request);
             
             if (token == null || token.isEmpty()) {
-                log.warn("❌ Missing Authorization header for: {}", path);
+                log.warn("❌ Missing Authorization header");
                 return onError(exchange, "Missing Authorization header", HttpStatus.UNAUTHORIZED);
             }
 
-            // ✅ Valider le token
             if (!validateToken(token)) {
-                log.warn("❌ Invalid JWT token for: {}", path);
+                log.warn("❌ Invalid JWT token");
                 return onError(exchange, "Invalid or expired token", HttpStatus.UNAUTHORIZED);
             }
 
-            // ✅ Extraire les claims
             Claims claims = extractClaims(token);
             if (claims == null) {
                 log.warn("❌ Failed to extract claims");
@@ -72,14 +67,18 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
             }
 
             String username = claims.getSubject();
-            String role = (String) claims.get("role");
+            String role = (String) claims.get("role");           // ✅ Récupérer le rôle
+            Long userId = claims.get("id", Long.class);          // ✅ Récupérer l'ID
+            String email = (String) claims.get("email");         // ✅ Récupérer l'email
 
-            log.info("✅ JWT validated for user: {} with role: {}", username, role);
+            log.info("✅ JWT validated - User: {} | Role: {} | ID: {}", 
+                username, role != null ? role : "UNKNOWN", userId);
 
-            // ✅ Ajouter les infos au header pour les services en aval
             ServerHttpRequest modifiedRequest = request.mutate()
                 .header("X-User-Id", username)
                 .header("X-User-Role", role != null ? role : "UNKNOWN")
+                .header("X-User-DB-ID", userId != null ? userId.toString() : "")
+                .header("X-User-Email", email != null ? email : "")
                 .header("X-Token", token)
                 .build();
 
@@ -87,13 +86,11 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
         };
     }
 
-    // ✅ Vérifier si c'est une route publique
     private boolean isPublicRoute(String path) {
         return PUBLIC_ROUTES.stream()
             .anyMatch(publicRoute -> path.startsWith(publicRoute));
     }
 
-    // ✅ Extraire le token du header
     private String extractToken(ServerHttpRequest request) {
         String authHeader = request.getHeaders().getFirst("Authorization");
         
@@ -102,14 +99,13 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
         }
         
         if (!authHeader.startsWith("Bearer ")) {
-            log.warn("Invalid Authorization format");
+            log.warn("⚠️ Invalid Authorization format");
             return null;
         }
         
         return authHeader.substring(7);
     }
 
-    // ✅ Valider le token JWT
     private boolean validateToken(String token) {
         try {
             SecretKey key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
@@ -117,7 +113,6 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
                 .setSigningKey(key)
                 .build()
                 .parseClaimsJws(token);
-            log.info("✅ Token JWT valid");
             return true;
         } catch (Exception e) {
             log.error("❌ Token validation failed: {}", e.getMessage());
@@ -125,7 +120,6 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
         }
     }
 
-    // ✅ Extraire les claims du token
     private Claims extractClaims(String token) {
         try {
             SecretKey key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
@@ -135,12 +129,11 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
                 .parseClaimsJws(token)
                 .getBody();
         } catch (Exception e) {
-            log.error("Failed to extract claims: {}", e.getMessage());
+            log.error("❌ Failed to extract claims: {}", e.getMessage());
             return null;
         }
     }
 
-    // ✅ Gérer les erreurs
     private Mono<Void> onError(ServerWebExchange exchange, String msg, HttpStatus httpStatus) {
         exchange.getResponse().setStatusCode(httpStatus);
         exchange.getResponse().getHeaders().set("Content-Type", "application/json");
@@ -160,8 +153,6 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
             ));
     }
 
-    // Config class (required by AbstractGatewayFilterFactory)
     public static class Config {
-        // Peut être vide ou contenir des propriétés de configuration
     }
 }
