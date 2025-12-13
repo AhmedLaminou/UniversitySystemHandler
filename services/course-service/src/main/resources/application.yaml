@@ -1,14 +1,16 @@
 spring:
   application:
     name: course-service
+
   datasource:
-    url: jdbc:mysql://localhost:3306/edupage?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://mysql-course:3306/course_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
     username: root
-    password: "@Mamoudou123"
+    password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
+
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     show-sql: true
     properties:
       hibernate:
@@ -22,8 +24,8 @@ server:
 
 app:
   jwt:
-    secret: MyVerySecureSecretKeyForAuthenticationJWTTokens2024WithEnoughCharacters
-    expiration: 86400000
+    secret: ${APP_JWT_SECRET}
+    expiration: ${APP_JWT_EXPIRATION:86400000}
 
 cxf:
   path: /ws
