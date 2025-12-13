@@ -8,7 +8,7 @@
     <groupId>com.nexis</groupId>
     <artifactId>course-service</artifactId>
     <version>1.0.0</version>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
 
     <name>Course Service</name>
     <description>Microservice de gestion des cours et emplois du temps</description>
