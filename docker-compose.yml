@@ -1,0 +1,117 @@
+services:
+  # ---------------------------
+  # DATABASES
+  # ---------------------------
+  mongodb:
+    image: mongo:6.0
+    container_name: soa-mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - soa-network
+
+  postgres:
+    image: postgres:15
+    container_name: soa-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: grade_user
+      POSTGRES_PASSWORD: grade_pass
+      POSTGRES_DB: grade_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - soa-network
+
+  mysql:
+    image: mysql:8.0
+    container_name: soa-mysql
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: billing_db
+      MYSQL_USER: billing_user
+      MYSQL_PASSWORD: billing_pass
+    volumes:
+      - mysql_data:/var/lib/mysql
+      # Initialise les bases auth_db et billing_db et droits utilisateurs
+      - ./services/mysql-init:/docker-entrypoint-initdb.d
+    networks:
+      - soa-network
+
+  # ---------------------------
+  # MICROSERVICES
+  # ---------------------------
+  student-service:
+    build: ./services/student-service
+    container_name: soa-student-service
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: 3000
+      MONGODB_URI: mongodb://mongodb:27017/student_db
+      JWT_SECRET: MyVerySecureSecretKeyForAuthenticationJWTTokens2024WithEnoughCharacters
+      AUTH_SERVICE_URL: http://auth-service:8080
+    depends_on:
+      - mongodb
+    networks:
+      - soa-network
+
+  grade-service:
+    build: ./services/grade-service
+    container_name: soa-grade-service
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://grade_user:grade_pass@postgres:5432/grade_db
+      JWT_SECRET: MyVerySecureSecretKeyForAuthenticationJWTTokens2024WithEnoughCharacters
+      AUTH_SERVICE_URL: http://auth-service:8080
+      PORT: 8000
+    depends_on:
+      - postgres
+    networks:
+      - soa-network
+
+  billing-service:
+    build: ./services/billing-service
+    container_name: soa-billing-service
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/billing_db
+      SPRING_DATASOURCE_USERNAME: billing_user
+      SPRING_DATASOURCE_PASSWORD: billing_pass
+      APP_JWT_SECRET: MyVerySecureSecretKeyForAuthenticationJWTTokens2024WithEnoughCharacters
+      APP_JWT_EXPIRATION: 86400000
+      PORT: 8081
+    depends_on:
+      - mysql
+    networks:
+      - soa-network
+
+  auth-service:
+    build: ./services/auth-service
+    container_name: soa-auth-service
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/auth_db
+      APP_JWT_SECRET: MyVerySecureSecretKeyForAuthenticationJWTTokens2024WithEnoughCharacters
+      APP_JWT_EXPIRATION: 86400000
+    depends_on:
+      - mysql
+    networks:
+      - soa-network
+
+networks:
+  soa-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:
+  postgres_data:
+  mysql_data:
