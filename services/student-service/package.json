@@ -1,0 +1,29 @@
+{
+  "name": "student-service",
+  "version": "1.0.0",
+  "description": "Service de gestion des étudiants - Architecture SOA",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
+  },
+  "keywords": [
+    "soa",
+    "students",
+    "microservices"
+  ],
+  "author": "Votre équipe",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "mongoose": "^8.0.3",
+    "dotenv": "^16.3.1",
+    "cors": "^2.8.5",
+    "jsonwebtoken": "^9.0.2",
+    "axios": "^1.6.2",
+    "express-validator": "^7.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  }
+}
