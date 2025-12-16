@@ -196,7 +196,7 @@ services:
 
 ### 1. Service d'Authentification (REST - Spring Boot)
 
-**Port** : 8081  
+**Port** : 8080
 **Base de Données** : PostgreSQL  
 **Responsabilités** :
 - Inscription et authentification des utilisateurs
@@ -244,7 +244,7 @@ CREATE TABLE refresh_tokens (
 
 ### 2. Service Étudiants (REST - Node.js/Express)
 
-**Port** : 8082  
+**Port** : 3000  
 **Base de Données** : MongoDB  
 **Responsabilités** :
 - CRUD des étudiants
@@ -296,7 +296,7 @@ GET    /api/students/search        - Rechercher (query params)
 
 ### 3. Service Cours (SOAP - Java/JAX-WS)
 
-**Port** : 8083  
+**Port** : 8082  
 **Base de Données** : MySQL  
 **Responsabilités** :
 - Gestion du catalogue de cours
@@ -358,7 +358,7 @@ CREATE TABLE enrollments (
 
 ### 4. Service Notes (REST - Python/FastAPI)
 
-**Port** : 8084  
+**Port** : 8000
 **Base de Données** : PostgreSQL  
 **Responsabilités** :
 
@@ -415,7 +415,7 @@ CREATE TABLE grade_averages (
 
 ### 5. Service Facturation (SOAP - .NET Core)
 
-**Port** : 8085  
+**Port** : 8081  
 **Base de Données** : SQL Server (ou PostgreSQL)  
 **Responsabilités** :
 - Gestion des frais universitaires
@@ -467,7 +467,7 @@ CREATE TABLE payments (
 
 ### 6. API Gateway (Spring Cloud Gateway)
 
-**Port** : 8080  
+**Port** : 9090  
 **Responsabilités** :
 - Point d'entrée unique
 - Routage intelligent
@@ -647,7 +647,7 @@ services:
   auth-service:
     build: ./services/auth-service
     ports:
-      - "8081:8081"
+      - "8080:8080"
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-auth:5432/auth_db
       SPRING_DATASOURCE_USERNAME: auth_user
@@ -659,7 +659,7 @@ services:
   student-service:
     build: ./services/student-service
     ports:
-      - "8082:8082"
+      - "3000:3000"
     environment:
       MONGODB_URI: mongodb://mongodb-student:27017/student_db
       JWT_SECRET: ${JWT_SECRET}
@@ -670,7 +670,7 @@ services:
   course-service:
     build: ./services/course-service
     ports:
-      - "8083:8083"
+      - "8082:8082"
     environment:
       MYSQL_URL: jdbc:mysql://mysql-course:3306/course_db
       MYSQL_USER: course_user
@@ -681,7 +681,7 @@ services:
   grade-service:
     build: ./services/grade-service
     ports:
-      - "8084:8084"
+      - "8000:8000"
     environment:
       DATABASE_URL: postgresql://grade_user:grade_pass@postgres-grade:5432/grade_db
       AUTH_SERVICE_URL: http://auth-service:8081
@@ -691,7 +691,7 @@ services:
   billing-service:
     build: ./services/billing-service
     ports:
-      - "8085:8085"
+      - "8081:8081"
     environment:
       ConnectionStrings__DefaultConnection: Server=sqlserver-billing;Database=billing_db;User Id=sa;Password=YourStrong@Passw0rd;TrustServerCertificate=True
     depends_on:
@@ -700,13 +700,13 @@ services:
   api-gateway:
     build: ./services/api-gateway
     ports:
-      - "8080:8080"
+      - "9090:9090"
     environment:
-      AUTH_SERVICE_URL: http://auth-service:8081
-      STUDENT_SERVICE_URL: http://student-service:8082
-      COURSE_SERVICE_URL: http://course-service:8083
-      GRADE_SERVICE_URL: http://grade-service:8084
-      BILLING_SERVICE_URL: http://billing-service:8085
+      AUTH_SERVICE_URL: http://auth-service:8080
+      STUDENT_SERVICE_URL: http://student-service:3000
+      COURSE_SERVICE_URL: http://course-service:8082
+      GRADE_SERVICE_URL: http://grade-service:8000
+      BILLING_SERVICE_URL: http://billing-service:8081
       JWT_SECRET: ${JWT_SECRET}
     depends_on:
       - auth-service
