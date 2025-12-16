@@ -1,0 +1,351 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 225 20% 97%;
+    --foreground: 210 100% 10%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 210 100% 10%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 210 100% 10%;
+
+    --primary: 210 100% 20%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 225 20% 94%;
+    --secondary-foreground: 210 100% 10%;
+
+    --muted: 225 15% 92%;
+    --muted-foreground: 215 16% 40%;
+
+    --accent: 45 100% 50%;
+    --accent-foreground: 210 100% 10%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 142 76% 36%;
+    --success-foreground: 0 0% 100%;
+
+    --border: 220 20% 88%;
+    --input: 220 20% 88%;
+    --ring: 210 100% 20%;
+
+    --radius: 0.75rem;
+
+    --glass-bg: 0 0% 100% / 0.85;
+    --glass-border: 220 20% 88%;
+    
+    --sidebar-background: 210 100% 20%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 45 100% 50%;
+    --sidebar-primary-foreground: 210 100% 10%;
+    --sidebar-accent: 210 80% 28%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 210 80% 25%;
+    --sidebar-ring: 45 100% 50%;
+
+    --footer-background: 210 100% 20%;
+    --footer-foreground: 0 0% 100%;
+  }
+
+  .dark {
+    --background: 210 50% 6%;
+    --foreground: 210 20% 98%;
+
+    --card: 210 50% 10%;
+    --card-foreground: 210 20% 98%;
+
+    --popover: 210 50% 10%;
+    --popover-foreground: 210 20% 98%;
+
+    --primary: 210 80% 45%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 210 40% 15%;
+    --secondary-foreground: 210 20% 98%;
+
+    --muted: 210 40% 18%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 45 100% 50%;
+    --accent-foreground: 210 100% 10%;
+
+    --destructive: 0 62% 40%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 142 76% 36%;
+    --success-foreground: 0 0% 100%;
+
+    --border: 210 40% 20%;
+    --input: 210 40% 20%;
+    --ring: 210 80% 45%;
+
+    --glass-bg: 210 50% 10% / 0.8;
+    --glass-border: 210 40% 25%;
+
+    --sidebar-background: 210 50% 8%;
+    --sidebar-foreground: 210 20% 98%;
+    --sidebar-primary: 45 100% 50%;
+    --sidebar-primary-foreground: 210 100% 10%;
+    --sidebar-accent: 210 60% 18%;
+    --sidebar-accent-foreground: 210 20% 98%;
+    --sidebar-border: 210 40% 15%;
+    --sidebar-ring: 45 100% 50%;
+
+    --footer-background: 210 50% 8%;
+    --footer-foreground: 210 20% 98%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-card border border-border shadow-md;
+  }
+
+  .glass-card-dark {
+    @apply bg-card border border-border shadow-lg;
+  }
+
+  .gradient-primary {
+    background: linear-gradient(135deg, hsl(210 100% 20%) 0%, hsl(210 80% 30%) 100%);
+  }
+
+  .gradient-accent {
+    background: linear-gradient(135deg, hsl(45 100% 50%) 0%, hsl(45 100% 55%) 100%);
+  }
+
+  .gradient-hero {
+    background: linear-gradient(135deg, hsl(210 100% 15%) 0%, hsl(210 100% 20%) 50%, hsl(210 100% 18%) 100%);
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(45 100% 50%) 0%, hsl(45 100% 60%) 100%);
+  }
+
+  .bento-grid {
+    @apply grid gap-4 md:gap-6;
+  }
+
+  .hover-lift {
+    @apply transition-all duration-200 ease-out;
+  }
+
+  .hover-lift:hover {
+    @apply -translate-y-0.5 shadow-lg;
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .animate-glow {
+    animation: glow 2s ease-in-out infinite alternate;
+  }
+
+  .marquee {
+    animation: marquee 30s linear infinite;
+  }
+
+  .schedule-block {
+    @apply bg-accent text-accent-foreground rounded-lg p-2 text-xs font-medium;
+  }
+}
+
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes glow {
+  from {
+    box-shadow: 0 0 20px hsl(38 92% 50% / 0.3);
+  }
+  to {
+    box-shadow: 0 0 40px hsl(38 92% 50% / 0.5);
+  }
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes counter {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.6s ease-out forwards;
+}
+
+.animate-slide-in-right {
+  animation: slide-in-right 0.5s ease-out forwards;
+}
+
+.animation-delay-100 { animation-delay: 0.1s; }
+.animation-delay-200 { animation-delay: 0.2s; }
+.animation-delay-300 { animation-delay: 0.3s; }
+.animation-delay-400 { animation-delay: 0.4s; }
+.animation-delay-500 { animation-delay: 0.5s; }
+
+.delay-100 { animation-delay: 0.1s; }
+.delay-200 { animation-delay: 0.2s; }
+.delay-300 { animation-delay: 0.3s; }
+.delay-500 { animation-delay: 0.5s; }
+.delay-1000 { animation-delay: 1s; }
+
+@keyframes gradient-shift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes gradient {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.animate-gradient-shift {
+  background-size: 200% 200%;
+  animation: gradient-shift 8s ease infinite;
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient 3s ease infinite;
+  background-image: linear-gradient(90deg, hsl(var(--accent)), hsl(var(--primary)), hsl(var(--accent)));
+}
+
+/* Dazzling Metallic Ribbons Animation */
+@keyframes ribbon-1 {
+  0% {
+    transform: translateX(-100%) translateY(0) -skew-y-12;
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(100vw) translateY(-20px) -skew-y-12;
+    opacity: 0;
+  }
+}
+
+@keyframes ribbon-2 {
+  0% {
+    transform: translateX(-100%) translateY(0) skew-y-12;
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(100vw) translateY(20px) skew-y-12;
+    opacity: 0;
+  }
+}
+
+@keyframes ribbon-3 {
+  0% {
+    transform: translateX(-100%) translateY(0) -skew-y-12;
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateX(100vw) translateY(-10px) -skew-y-12;
+    opacity: 0;
+  }
+}
+
+.animate-ribbon-1 {
+  animation: ribbon-1 8s ease-in-out infinite;
+}
+
+.animate-ribbon-2 {
+  animation: ribbon-2 10s ease-in-out infinite;
+  animation-delay: 1s;
+}
+
+.animate-ribbon-3 {
+  animation: ribbon-3 12s ease-in-out infinite;
+  animation-delay: 2s;
+}

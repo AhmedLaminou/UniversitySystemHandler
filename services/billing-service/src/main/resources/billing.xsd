@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:tns="http://nexis.com/billing"
+           targetNamespace="http://nexis.com/billing"
+           elementFormDefault="qualified">
+
+    <xs:element name="getInvoicesRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="studentId" type="xs:string" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="getInvoicesResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="invoice" type="tns:invoice" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="createInvoiceRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="studentId" type="xs:string"/>
+                <xs:element name="description" type="xs:string"/>
+                <xs:element name="amount" type="xs:double"/>
+                <xs:element name="dueDate" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="createInvoiceResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="invoice" type="tns:invoice" minOccurs="0"/>
+                <xs:element name="success" type="xs:boolean"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="recordPaymentRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="invoiceId" type="xs:long"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="recordPaymentResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="success" type="xs:boolean"/>
+                <xs:element name="message" type="xs:string" minOccurs="0"/>
+                <xs:element name="invoice" type="tns:invoice" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="getBalanceRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="studentId" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="getBalanceResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="studentId" type="xs:string"/>
+                <xs:element name="totalAmount" type="xs:double"/>
+                <xs:element name="totalPaid" type="xs:double"/>
+                <xs:element name="balance" type="xs:double"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="invoice">
+        <xs:sequence>
+            <xs:element name="id" type="xs:long"/>
+            <xs:element name="studentId" type="xs:string"/>
+            <xs:element name="description" type="xs:string"/>
+            <xs:element name="amount" type="xs:double"/>
+            <xs:element name="dueDate" type="xs:string" minOccurs="0"/>
+            <xs:element name="status" type="xs:string"/>
+            <xs:element name="paymentDate" type="xs:string" minOccurs="0"/>
+            <xs:element name="createdAt" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+</xs:schema>

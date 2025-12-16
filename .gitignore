@@ -1,0 +1,49 @@
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# Dependencies
+node_modules/
+FrontEnd/node_modules/
+
+# Build outputs
+target/
+build/
+dist/
+*.jar
+!**/src/**/target/
+FrontEnd/dist/
+
+# Logs
+*.log
+logs/
+
+# Environment
+.env
+.env.local
+*.env
+
+# Temp files
+temp_*
+*.tmp
+*.bak
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Docker volumes (local data)
+mysql_data/
+mongodb_data/
+postgres_data/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Coverage
+coverage/
+.nyc_output/

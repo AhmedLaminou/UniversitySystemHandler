@@ -1,0 +1,824 @@
+{
+  "info": {
+    "name": "SOA University System - Complete API Tests",
+    "description": "Collection de tests pour tous les services SOA",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "localhost"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "student_id",
+      "value": "STU001",
+      "type": "string"
+    },
+    {
+      "key": "course_id",
+      "value": "COURSE001",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "🔐 AUTHENTIFICATION (Auth Service - Port 8080)",
+      "item": [
+        {
+          "name": "1️⃣ Register - Créer un compte",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"ahmed@university.edu\",\n  \"password\": \"SecurePass123!\",\n  \"firstName\": \"Ahmed\",\n  \"lastName\": \"Laminou\",\n  \"role\": \"STUDENT\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}:8080/auth/register",
+              "protocol": "http",
+              "host": [
+                "{{base_url}}"
+              ],
+              "port": "8080",
+              "path": [
+                "auth",
+                "register"
+              ]
+            },
+            "description": "Créer un nouveau compte utilisateur"
+          },
+          "response": []
+        },
+        {
+          "name": "2️⃣ Login - Se connecter",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  var jsonData = pm.response.json();",
+                  "  pm.environment.set(\"token\", jsonData.token);",
+                  "  pm.environment.set(\"user_id\", jsonData.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"ahmed@university.edu\",\n  \"password\": \"SecurePass123!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}:8080/auth/login",
+              "protocol": "http",
+              "host": [
+                "{{base_url}}"
+              ],
+              "port": "8080",
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Se connecter et obtenir un JWT token (le token est automatiquement sauvegardé)"
+          },
+          "response": []
+        },
+        {
+          "name": "3️⃣ Validate Token - Valider le token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}:8080/auth/validate",
+              "protocol": "http",
+              "host": [
+                "{{base_url}}"
+              ],
+              "port": "8080",
+              "path": [
+                "auth",
+                "validate"
+              ]
+            },
+            "description": "Valider que le token JWT est correct"
+          },
+          "response": []
+        },
+        {
+          "name": "4️⃣ Refresh Token - Renouveler le token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{token}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}:8080/auth/refresh",
+              "protocol": "http",
+              "host": [
+                "{{base_url}}"
+              ],
+              "port": "8080",
+              "path": [
+                "auth",
+                "refresh"
+              ]
+            },
+            "description": "Obtenir un nouveau token (rafraîchir)"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "👥 SERVICE ÉTUDIANTS (Port 3000)",
+      "item": [
+        {
+          "name": "1️⃣ List All Students - Lister tous les étudiants",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}:3000/api/students",
+              "protocol": "http",
+              "host": [
+                "{{base_url}}"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "students"
+              ]
+            },
+            "description": "Récupérer la liste complète des étudiants"
+          },
+          "response": []
+        },
+        {
+          "name": "2️⃣ Create Student - Créer un étudiant",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201 || pm.response.code === 200) {",
+                  "  var jsonData = pm.response.json();",
+                  "  pm.environment.set(\"student_id\", jsonData._id || jsonData.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"matricule\": \"STU001\",\n  \"firstName\": \"Fatima\",\n  \"lastName\": \"Ben Ahmed\",\n  \"email\": \"fatima@university.edu\",\n  \"program\": \"Génie Logiciel\",\n  \"enrollmentDate\": \"2024-09-01\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}:3000/api/students",
+              "protocol": "http",
+              "host": [
+                "{{base_url}}"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "students"
+              ]
+            },
+            "description": "Créer un nouveau profil étudiant (l'ID est automatiquement sauvegardé)"
+          },
+          "response": []
+        },
+        {
+          "name": "3️⃣ Get Student By ID - Récupérer un étudiant",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}:3000/api/students/{{student_id}}",
+              "protocol": "http",
+              "host": [
+                "{{base_url}}"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "students",
+                "{{student_id}}"
+              ]
+            },
+            "description": "Récupérer les détails d'un étudiant spécifique"
+          },
+          "response": []
+        },
+        {
+          "name": "4️⃣ Update Student - Modifier un étudiant",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"Fatima\",\n  \"lastName\": \"Ben Ahmed Updated\",\n  \"email\": \"fatima.updated@university.edu\",\n  \"program\": \"Génie Logiciel et Systèmes d'Information\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}:3000/api/students/{{student_id}}",
+              "protocol": "http",
+              "host": [
+                "{{base_url}}"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "students",
+                "{{student_id}}"
+              ]
+            },
+            "description": "Modifier les informations d'un étudiant"
+          },
+          "response": []
+        },
+        {
+          "name": "5️⃣ Delete Student - Supprimer un étudiant",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}:3000/api/students/{{student_id}}",
+              "protocol": "http",
+              "host": [
+                "{{base_url}}"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "students",
+                "{{student_id}}"
+              ]
+            },
+            "description": "Supprimer un profil étudiant"
+          },
+          "response": []
+        },
+        {
+          "name": "6️⃣ Search Students - Rechercher des étudiants",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}:3000/api/students?firstName=Ahmed",
+              "protocol": "http",
+              "host": [
+                "{{base_url}}"
+              ],
+              "port": "3000",
+              "path": [
+                "api",
+                "students"
+              ],
+              "query": [
+                {
+                  "key": "firstName",
+                  "value": "Ahmed"
+                }
+              ]
+            },
+            "description": "Rechercher des étudiants par critère"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "📊 SERVICE NOTES (Port 8000)",
+      "item": [
+        {
+          "name": "1️⃣ List All Grades - Lister toutes les notes",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}:8000/api/grades",
+              "protocol": "http",
+              "host": [
+                "{{base_url}}"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "grades"
+              ]
+            },
+            "description": "Récupérer la liste complète des notes"
+          },
+          "response": []
+        },
+        {
+          "name": "2️⃣ Create Grade - Ajouter une note",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200 || pm.response.code === 201) {",
+                  "  var jsonData = pm.response.json();",
+                  "  pm.environment.set(\"grade_id\", jsonData.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"student_id\": \"{{student_id}}\",\n  \"course_id\": \"COURSE001\",\n  \"grade\": 92.5,\n  \"feedback\": \"Excellent travail\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}:8000/api/grades",
+              "protocol": "http",
+              "host": [
+                "{{base_url}}"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "grades"
+              ]
+            },
+            "description": "Créer une nouvelle note pour un étudiant"
+          },
+          "response": []
+        },
+        {
+          "name": "3️⃣ Get Student Grades - Notes d'un étudiant",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}:8000/api/grades/student/{{student_id}}",
+              "protocol": "http",
+              "host": [
+                "{{base_url}}"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "grades",
+                "student",
+                "{{student_id}}"
+              ]
+            },
+            "description": "Récupérer toutes les notes d'un étudiant spécifique"
+          },
+          "response": []
+        },
+        {
+          "name": "4️⃣ Get Student Average - Moyenne d'un étudiant",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}:8000/api/grades/student/{{student_id}}/average",
+              "protocol": "http",
+              "host": [
+                "{{base_url}}"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "grades",
+                "student",
+                "{{student_id}}",
+                "average"
+              ]
+            },
+            "description": "Calculer la moyenne générale d'un étudiant"
+          },
+          "response": []
+        },
+        {
+          "name": "5️⃣ Update Grade - Modifier une note",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"grade\": 95.0,\n  \"feedback\": \"Excellent ! Correction faite\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}:8000/api/grades/{{grade_id}}",
+              "protocol": "http",
+              "host": [
+                "{{base_url}}"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "grades",
+                "{{grade_id}}"
+              ]
+            },
+            "description": "Modifier une note existante"
+          },
+          "response": []
+        },
+        {
+          "name": "6️⃣ Delete Grade - Supprimer une note",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}:8000/api/grades/{{grade_id}}",
+              "protocol": "http",
+              "host": [
+                "{{base_url}}"
+              ],
+              "port": "8000",
+              "path": [
+                "api",
+                "grades",
+                "{{grade_id}}"
+              ]
+            },
+            "description": "Supprimer une note"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "💰 SERVICE FACTURATION (Port 8081 - SOAP)",
+      "item": [
+        {
+          "name": "1️⃣ Get Invoices - Récupérer les factures",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "text/xml"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"\n                   xmlns:bil=\"http://billing.nexis.com\">\n   <soapenv:Header/>\n   <soapenv:Body>\n      <bil:getInvoices>\n         <studentId>STU001</studentId>\n      </bil:getInvoices>\n   </soapenv:Body>\n</soapenv:Envelope>"
+            },
+            "url": {
+              "raw": "{{base_url}}:8081/api/services/billing",
+              "protocol": "http",
+              "host": [
+                "{{base_url}}"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "services",
+                "billing"
+              ]
+            },
+            "description": "Récupérer les factures d'un étudiant (SOAP)"
+          },
+          "response": []
+        },
+        {
+          "name": "2️⃣ Create Invoice - Créer une facture",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "text/xml"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"\n                   xmlns:bil=\"http://billing.nexis.com\">\n   <soapenv:Header/>\n   <soapenv:Body>\n      <bil:createInvoice>\n         <studentId>STU001</studentId>\n         <amount>5000.00</amount>\n         <description>Frais de scolarité - Semestre 1</description>\n         <dueDate>2025-01-31</dueDate>\n      </bil:createInvoice>\n   </soapenv:Body>\n</soapenv:Envelope>"
+            },
+            "url": {
+              "raw": "{{base_url}}:8081/api/services/billing",
+              "protocol": "http",
+              "host": [
+                "{{base_url}}"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "services",
+                "billing"
+              ]
+            },
+            "description": "Créer une nouvelle facture pour un étudiant (SOAP)"
+          },
+          "response": []
+        },
+        {
+          "name": "3️⃣ Get Payments - Récupérer les paiements",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "text/xml"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"\n                   xmlns:bil=\"http://billing.nexis.com\">\n   <soapenv:Header/>\n   <soapenv:Body>\n      <bil:getPayments>\n         <studentId>STU001</studentId>\n      </bil:getPayments>\n   </soapenv:Body>\n</soapenv:Envelope>"
+            },
+            "url": {
+              "raw": "{{base_url}}:8081/api/services/billing",
+              "protocol": "http",
+              "host": [
+                "{{base_url}}"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "services",
+                "billing"
+              ]
+            },
+            "description": "Récupérer l'historique des paiements d'un étudiant (SOAP)"
+          },
+          "response": []
+        },
+        {
+          "name": "4️⃣ Record Payment - Enregistrer un paiement",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "text/xml"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"\n                   xmlns:bil=\"http://billing.nexis.com\">\n   <soapenv:Header/>\n   <soapenv:Body>\n      <bil:recordPayment>\n         <invoiceId>INV001</invoiceId>\n         <studentId>STU001</studentId>\n         <amount>5000.00</amount>\n         <paymentMethod>BANK_TRANSFER</paymentMethod>\n         <referenceNumber>BANK20251215001</referenceNumber>\n      </bil:recordPayment>\n   </soapenv:Body>\n</soapenv:Envelope>"
+            },
+            "url": {
+              "raw": "{{base_url}}:8081/api/services/billing",
+              "protocol": "http",
+              "host": [
+                "{{base_url}}"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "services",
+                "billing"
+              ]
+            },
+            "description": "Enregistrer un paiement pour une facture (SOAP)"
+          },
+          "response": []
+        },
+        {
+          "name": "5️⃣ Get Balance - Solde d'un étudiant",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "text/xml"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"\n                   xmlns:bil=\"http://billing.nexis.com\">\n   <soapenv:Header/>\n   <soapenv:Body>\n      <bil:getBalance>\n         <studentId>STU001</studentId>\n      </bil:getBalance>\n   </soapenv:Body>\n</soapenv:Envelope>"
+            },
+            "url": {
+              "raw": "{{base_url}}:8081/api/services/billing",
+              "protocol": "http",
+              "host": [
+                "{{base_url}}"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "services",
+                "billing"
+              ]
+            },
+            "description": "Récupérer le solde/montant dû par un étudiant (SOAP)"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🌐 HEALTH CHECKS",
+      "item": [
+        {
+          "name": "Health Check - Auth Service",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}:8080/actuator/health",
+              "protocol": "http",
+              "host": [
+                "{{base_url}}"
+              ],
+              "port": "8080",
+              "path": [
+                "actuator",
+                "health"
+              ]
+            },
+            "description": "Vérifier si Auth Service est opérationnel"
+          },
+          "response": []
+        },
+        {
+          "name": "Health Check - Student Service",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}:3000/health",
+              "protocol": "http",
+              "host": [
+                "{{base_url}}"
+              ],
+              "port": "3000",
+              "path": [
+                "health"
+              ]
+            },
+            "description": "Vérifier si Student Service est opérationnel"
+          },
+          "response": []
+        },
+        {
+          "name": "Health Check - Grade Service",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}:8000/health",
+              "protocol": "http",
+              "host": [
+                "{{base_url}}"
+              ],
+              "port": "8000",
+              "path": [
+                "health"
+              ]
+            },
+            "description": "Vérifier si Grade Service est opérationnel"
+          },
+          "response": []
+        },
+        {
+          "name": "Health Check - Billing Service",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}:8081/actuator/health",
+              "protocol": "http",
+              "host": [
+                "{{base_url}}"
+              ],
+              "port": "8081",
+              "path": [
+                "actuator",
+                "health"
+              ]
+            },
+            "description": "Vérifier si Billing Service est opérationnel"
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
