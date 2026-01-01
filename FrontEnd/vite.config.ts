@@ -6,7 +6,7 @@ import path from "path";
 export default defineConfig(() => ({
   server: {
     host: "localhost",
-    port: 5173, // port par défaut Vite (évite le conflit avec auth-service en 8080)
+    port: 5200, // Mis à jour pour correspondre au port 5200 configuré dans docker-compose
   },
   plugins: [react()],
   resolve: {

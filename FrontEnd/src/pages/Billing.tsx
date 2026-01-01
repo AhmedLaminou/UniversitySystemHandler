@@ -75,7 +75,7 @@ const getStatusBadge = (status: string) => {
 };
 
 const formatAmount = (amount: number) => {
-  return new Intl.NumberFormat("fr-TN", { minimumFractionDigits: 0 }).format(amount) + " DT";
+  return new Intl.NumberFormat("fr-NE", { minimumFractionDigits: 0 }).format(amount) + " XOF";
 };
 
 const formatDate = (dateString: string) => {
@@ -375,18 +375,19 @@ const Billing = () => {
             </div>
           </div>
 
-          {/* Payment Dialog */}
+          {/* Payment Dialog - Niger-Specific Providers */}
           <Dialog open={isPayDialogOpen} onOpenChange={setIsPayDialogOpen}>
-            <DialogContent>
+            <DialogContent className="max-w-md">
               <DialogHeader>
-                <DialogTitle>Enregistrer un paiement</DialogTitle>
+                <DialogTitle>Effectuer un Paiement</DialogTitle>
                 <DialogDescription>
                   {selectedInvoice && `Paiement pour: ${selectedInvoice.description}`}
                 </DialogDescription>
               </DialogHeader>
               <div className="space-y-4 py-4">
+                {/* Amount */}
                 <div className="space-y-2">
-                  <Label htmlFor="pay-amount">Montant (DT)</Label>
+                  <Label htmlFor="pay-amount">Montant (XOF)</Label>
                   <Input
                     id="pay-amount"
                     type="number"
@@ -395,32 +396,120 @@ const Billing = () => {
                     onChange={(e) => setPaymentForm({ ...paymentForm, amount: parseFloat(e.target.value) || 0 })}
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="pay-method">Mode de paiement</Label>
-                  <Select
-                    value={paymentForm.paymentMethod}
-                    onValueChange={(value) => setPaymentForm({ ...paymentForm, paymentMethod: value })}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Sélectionner..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="BANK_TRANSFER">Virement bancaire</SelectItem>
-                      <SelectItem value="CASH">Espèces</SelectItem>
-                      <SelectItem value="CARD">Carte bancaire</SelectItem>
-                      <SelectItem value="CHECK">Chèque</SelectItem>
-                    </SelectContent>
-                  </Select>
+                
+                {/* Payment Method Selection - Niger Specific */}
+                <div className="space-y-3">
+                  <Label>Mode de paiement</Label>
+                  <div className="grid grid-cols-1 gap-3">
+                    {/* MyNita Option */}
+                    <div
+                      className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                        paymentForm.paymentMethod === "MYNITA"
+                          ? "border-primary bg-primary/10"
+                          : "border-muted hover:border-primary/50"
+                      }`}
+                      onClick={() => setPaymentForm({ ...paymentForm, paymentMethod: "MYNITA" })}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 rounded-full bg-green-100">
+                          <Wallet className="h-5 w-5 text-green-600" />
+                        </div>
+                        <div>
+                          <p className="font-medium">MyNita</p>
+                          <p className="text-sm text-muted-foreground">Portefeuille mobile Niger</p>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Bank Card Option */}
+                    <div
+                      className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                        paymentForm.paymentMethod === "BANK_CARD"
+                          ? "border-primary bg-primary/10"
+                          : "border-muted hover:border-primary/50"
+                      }`}
+                      onClick={() => setPaymentForm({ ...paymentForm, paymentMethod: "BANK_CARD" })}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 rounded-full bg-blue-100">
+                          <CreditCard className="h-5 w-5 text-blue-600" />
+                        </div>
+                        <div>
+                          <p className="font-medium">Carte Bancaire</p>
+                          <p className="text-sm text-muted-foreground">Visa, Mastercard</p>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Mobile Money Option */}
+                    <div
+                      className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                        paymentForm.paymentMethod === "MOBILE_MONEY"
+                          ? "border-primary bg-primary/10"
+                          : "border-muted hover:border-primary/50"
+                      }`}
+                      onClick={() => setPaymentForm({ ...paymentForm, paymentMethod: "MOBILE_MONEY" })}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 rounded-full bg-orange-100">
+                          <Receipt className="h-5 w-5 text-orange-600" />
+                        </div>
+                        <div>
+                          <p className="font-medium">Mobile Money</p>
+                          <p className="text-sm text-muted-foreground">Orange Money, Airtel Money</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="pay-ref">Référence</Label>
-                  <Input
-                    id="pay-ref"
-                    placeholder="BANK20241215001"
-                    value={paymentForm.referenceNumber}
-                    onChange={(e) => setPaymentForm({ ...paymentForm, referenceNumber: e.target.value })}
-                  />
-                </div>
+                
+                {/* Conditional fields based on payment method */}
+                {paymentForm.paymentMethod === "MYNITA" && (
+                  <div className="space-y-2">
+                    <Label htmlFor="pay-phone">Numéro de téléphone</Label>
+                    <Input
+                      id="pay-phone"
+                      placeholder="+227 XX XX XX XX"
+                      value={paymentForm.referenceNumber}
+                      onChange={(e) => setPaymentForm({ ...paymentForm, referenceNumber: e.target.value })}
+                    />
+                  </div>
+                )}
+                
+                {paymentForm.paymentMethod === "MOBILE_MONEY" && (
+                  <div className="space-y-2">
+                    <Label htmlFor="pay-phone">Numéro de téléphone</Label>
+                    <Input
+                      id="pay-phone"
+                      placeholder="+227 XX XX XX XX"
+                      value={paymentForm.referenceNumber}
+                      onChange={(e) => setPaymentForm({ ...paymentForm, referenceNumber: e.target.value })}
+                    />
+                  </div>
+                )}
+                
+                {paymentForm.paymentMethod === "BANK_CARD" && (
+                  <div className="space-y-3">
+                    <div className="space-y-2">
+                      <Label htmlFor="card-number">Numéro de carte</Label>
+                      <Input
+                        id="card-number"
+                        placeholder="1234 5678 9012 3456"
+                        maxLength={19}
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="space-y-2">
+                        <Label htmlFor="card-expiry">Date d'expiration</Label>
+                        <Input id="card-expiry" placeholder="MM/YY" maxLength={5} />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="card-cvv">CVV</Label>
+                        <Input id="card-cvv" placeholder="123" maxLength={4} type="password" />
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
               <DialogFooter>
                 <Button variant="outline" onClick={() => setIsPayDialogOpen(false)}>

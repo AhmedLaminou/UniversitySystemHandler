@@ -123,6 +123,75 @@ services:
     networks:
       - soa-network
 
+  payment-service:
+    build: ./services/payment-service
+    container_name: soa-payment-service
+    ports:
+      - "8083:8083"
+    environment:
+      DATABASE_URL: postgresql://payment_user:payment_pass@postgres-payment:5432/payment_db
+      PORT: 8083
+      # Payment Provider Credentials (PLACEHOLDERS)
+      MYNITA_API_KEY: YOUR_MYNITA_API_KEY_HERE
+      MYNITA_MERCHANT_ID: YOUR_MERCHANT_ID_HERE
+      MYNITA_API_URL: https://api.mynita.ne/v1
+      CARD_GATEWAY_API_KEY: YOUR_GATEWAY_API_KEY_HERE
+      CARD_GATEWAY_SECRET: YOUR_GATEWAY_SECRET_HERE
+    depends_on:
+      - postgres-payment
+    networks:
+      - soa-network
+
+  notification-service:
+    build: ./services/notification-service
+    container_name: soa-notification-service
+    ports:
+      - "8084:8084"
+    environment:
+      PORT: 8084
+      MONGODB_URI: mongodb://mongodb:27017/notification_db
+      # SMTP Configuration (PLACEHOLDERS)
+      SMTP_HOST: smtp.gmail.com
+      SMTP_PORT: 587
+      SMTP_USER: your-email@gmail.com
+      SMTP_PASS: your-app-password
+      EMAIL_FROM: "Université Niger <noreply@universite.ne>"
+    depends_on:
+      - mongodb
+    networks:
+      - soa-network
+
+  frontend:
+    build: ./FrontEnd
+    container_name: soa-frontend
+    ports:
+      - "5200:5200"
+    depends_on:
+      - auth-service
+      - student-service
+      - grade-service
+      - billing-service
+      - course-service
+      - payment-service
+      - notification-service
+    networks:
+      - soa-network
+
+  # Payment Database (separate Postgres instance)
+  postgres-payment:
+    image: postgres:15
+    container_name: soa-postgres-payment
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: payment_user
+      POSTGRES_PASSWORD: payment_pass
+      POSTGRES_DB: payment_db
+    volumes:
+      - postgres_payment_data:/var/lib/postgresql/data
+    networks:
+      - soa-network
+
 networks:
   soa-network:
     driver: bridge
@@ -131,3 +200,4 @@ volumes:
   mongodb_data:
   postgres_data:
   mysql_data:
+  postgres_payment_data:
