@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
-
+import Inscription from "@/assets/1.jpg";
 const news = [
   {
     id: 1,
@@ -10,7 +10,7 @@ const news = [
     excerpt: "Les inscriptions pour la nouvelle année académique sont désormais ouvertes. Découvrez nos nouveaux programmes.",
     date: "15 Déc 2024",
     category: "Inscriptions",
-    image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=400&h=250&fit=crop"
+    image: Inscription,
   },
   {
     id: 2,

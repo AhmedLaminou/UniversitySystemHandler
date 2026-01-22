@@ -1,6 +1,7 @@
 {
   "name": "uniportal-frontend",
   "version": "1.0.0",
+  "type": "module",
   "private": true,
   "description": "FrontEnd React + Vite pour le système SOA universitaire (UniPortal).",
   "scripts": {

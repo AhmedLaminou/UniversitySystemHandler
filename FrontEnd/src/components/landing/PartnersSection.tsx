@@ -6,11 +6,11 @@ import toyota from "@/assets/toyota.png";
 import mit from "@/assets/mit.png";
 
 const partners = [
-  { name: "Microsoft", logo: {microsoft} },
-  { name: "Google", logo: {google} },
-  { name: "NVIDIA", logo: {nvidia} },
-  { name: "Toyota", logo: {toyota} },
-  { name: "MIT", logo: {mit} },
+  { name: "Microsoft", logo: microsoft },
+  { name: "Google", logo: google },
+  { name: "NVIDIA", logo: nvidia },
+  { name: "Toyota", logo: toyota },
+  { name: "MIT", logo: mit },
 ];
 
 export const PartnersSection = () => {

@@ -29,6 +29,10 @@ import News from "./pages/News";
 import Research from "./pages/Research";
 import Teachers from "./pages/Teachers";
 import StudentExtranet from "./pages/StudentExtranet";
+import Gallery from "./pages/Gallery";
+import AdminNewsList from "./pages/AdminNewsList";
+import AdminNewsCreate from "./pages/AdminNewsCreate";
+import AdminGalleryCreate from "./pages/AdminGalleryCreate";
 
 const queryClient = new QueryClient();
 
@@ -39,7 +43,7 @@ const App = () => (
         <TooltipProvider>
           <Toaster />
           <Sonner />
-          <BrowserRouter>
+          <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
             <Routes>
               {/* Landing & public pages */}
               <Route path="/" element={<Index />} />
@@ -47,6 +51,7 @@ const App = () => (
               <Route path="/register" element={<Register />} />
               <Route path="/formations" element={<Formations />} />
               <Route path="/actualites" element={<Actualites />} />
+              <Route path="/gallery" element={<Gallery />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/about" element={<About />} />
               <Route path="/laboratories" element={<Laboratories />} />
@@ -130,6 +135,32 @@ const App = () => (
               element={
                 <RequireAuth>
                   <StudentExtranet />
+                </RequireAuth>
+              }
+            />
+            
+            {/* Admin Routes */}
+            <Route
+              path="/dashboard/admin/news"
+              element={
+                <RequireAuth>
+                  <AdminNewsList />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/dashboard/admin/news/create"
+              element={
+                <RequireAuth>
+                  <AdminNewsCreate />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/dashboard/admin/gallery"
+              element={
+                <RequireAuth>
+                  <AdminGalleryCreate />
                 </RequireAuth>
               }
             />

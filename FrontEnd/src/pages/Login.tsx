@@ -3,21 +3,15 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { GraduationCap, Mail, Lock, ArrowRight, Eye, EyeOff } from "lucide-react";
+import { GraduationCap, Mail, Lock, ArrowRight, Eye, EyeOff, CheckCircle2 } from "lucide-react";
 import { Helmet } from "react-helmet-async";
 import { useAuth } from "@/hooks/useAuth";
-import { useToast } from "@/components/ui/use-toast";
-import heroImage from "@/assets/hero-campus.jpg";
-import image4 from "@/assets/4.jpg";
-import image5 from "@/assets/5.jpg";
-import image6 from "@/assets/6.jpg";
+import { toast } from "sonner";
 
 const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { login, isLoading } = useAuth();
-  const { toast } = useToast();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -27,258 +21,191 @@ const Login = () => {
     try {
       await login(email, password);
       const from = (location.state as any)?.from?.pathname || "/dashboard";
+      toast.success("Bon retour parmi nous !");
       navigate(from, { replace: true });
     } catch (err: any) {
-      toast({
-        title: "Échec de la connexion",
-        description: err?.message || "Vérifiez vos identifiants et réessayez.",
-        variant: "destructive",
-      });
+      toast.error(err?.message || "Identifiants incorrects. Veuillez réessayer.");
     }
   };
 
   return (
     <>
       <Helmet>
-        <title>Connexion - UniPortal</title>
-        <meta name="description" content="Connectez-vous à votre espace étudiant UniPortal pour accéder à vos cours, notes et services universitaires." />
+        <title>Connexion | UniPortal Premium</title>
       </Helmet>
 
-      <div className="min-h-screen flex relative overflow-hidden">
-        {/* Animated Background - Left Side */}
-        <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
-          {/* Animated Gradient Background with Dazzling Ribbons */}
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/90 via-primary/70 to-accent/60">
-            {/* Dazzling Animated Metallic Ribbons */}
-            <div className="absolute inset-0 overflow-hidden">
-              <div className="absolute top-1/4 left-0 w-full h-32 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-y-12 animate-ribbon-1" />
-              <div className="absolute top-1/2 left-0 w-full h-32 bg-gradient-to-r from-transparent via-white/15 to-transparent transform skew-y-12 animate-ribbon-2" />
-              <div className="absolute bottom-1/4 left-0 w-full h-32 bg-gradient-to-r from-transparent via-white/10 to-transparent transform -skew-y-12 animate-ribbon-3" />
-            </div>
-            
-            {/* Overlay Images */}
-            <div className="absolute inset-0">
-              <div className="absolute inset-0 bg-black/40" />
-              <img
-                src={heroImage}
-                alt="Campus"
-                className="absolute inset-0 w-full h-full object-cover opacity-30 mix-blend-overlay"
-              />
-              <div className="absolute top-10 left-10 w-48 h-32 rounded-xl overflow-hidden shadow-2xl transform rotate-6 hover:scale-110 transition-transform duration-500">
-                <img src={image4} alt="Activité étudiante" className="w-full h-full object-cover" />
-              </div>
-              <div className="absolute top-1/2 right-10 w-48 h-32 rounded-xl overflow-hidden shadow-2xl transform -rotate-6 hover:scale-110 transition-transform duration-500 delay-200">
-                <img src={image5} alt="Bâtiment" className="w-full h-full object-cover" />
-              </div>
-              <div className="absolute bottom-20 left-1/3 w-48 h-32 rounded-xl overflow-hidden shadow-2xl transform rotate-3 hover:scale-110 transition-transform duration-500 delay-500">
-                <img src={image6} alt="Étudiants" className="w-full h-full object-cover" />
-              </div>
-            </div>
-          </div>
+      <div className="min-h-screen flex bg-[#f8fafc] dark:bg-[#020617] transition-colors duration-500 overflow-hidden">
+        {/* Left Side: Visual/Marketing - Hidden on mobile */}
+        <div className="hidden lg:flex w-1/2 relative bg-[#0f172a] text-white p-12 flex-col justify-between">
+          {/* Animated Background Gradients */}
+          <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-primary/20 rounded-full blur-[120px] animate-pulse-soft" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-accent/20 rounded-full blur-[120px] animate-pulse-soft delay-700" />
           
-          {/* Animated Orbs */}
-          <div className="absolute top-20 right-20 w-96 h-96 bg-accent/20 rounded-full blur-3xl animate-float" />
-          <div className="absolute bottom-20 left-20 w-80 h-80 bg-white/10 rounded-full blur-3xl animate-float delay-1000" />
-          <div className="absolute top-1/2 left-1/4 w-64 h-64 bg-accent/40 rounded-full blur-2xl animate-pulse" />
-          <div className="absolute bottom-1/3 right-1/3 w-72 h-72 bg-primary/30 rounded-full blur-3xl animate-pulse delay-500" />
-          
-          {/* Grid Pattern Overlay */}
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff08_1px,transparent_1px),linear-gradient(to_bottom,#ffffff08_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)]" />
-          
-          {/* Animated Particles */}
-          <div className="absolute inset-0">
-            {[...Array(20)].map((_, i) => (
-              <div
-                key={i}
-                className="absolute w-2 h-2 bg-white/30 rounded-full animate-pulse"
-                style={{
-                  left: `${Math.random() * 100}%`,
-                  top: `${Math.random() * 100}%`,
-                  animationDelay: `${Math.random() * 2}s`,
-                  animationDuration: `${2 + Math.random() * 2}s`,
-                }}
-              />
-            ))}
+          <div className="relative z-10">
+            <Link to="/" className="flex items-center gap-3 group">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform duration-300">
+                <GraduationCap className="h-7 w-7 text-white" />
+              </div>
+              <span className="text-2xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-white/60">
+                UniPortal
+              </span>
+            </Link>
           </div>
 
-          {/* Content */}
-          <div className="relative z-10 flex flex-col justify-between p-12 text-white">
-            <div className="animate-fade-in-up">
-              <Link to="/" className="flex items-center gap-3 group">
-                <div className="p-2.5 rounded-xl gradient-accent group-hover:scale-110 transition-transform duration-300 animate-float">
-                  <GraduationCap className="h-7 w-7 text-primary" />
-                </div>
-                <span className="font-bold text-2xl bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">
-                  UniPortal
-                </span>
-              </Link>
-            </div>
+          <div className="relative z-10 space-y-8 max-w-lg">
+            <h1 className="text-6xl font-extrabold leading-[1.1] tracking-tight">
+              L'excellence <br /> 
+              <span className="text-premium">Académique</span> <br />
+              Redéfinie.
+            </h1>
+            <p className="text-lg text-slate-400 leading-relaxed font-light">
+              Connectez-vous pour accéder à un écosystème intelligent conçu pour propulser votre réussite universitaire.
+            </p>
             
-            <div className="space-y-6 animate-fade-in-up delay-200">
-              <h1 className="text-5xl font-bold leading-tight">
-                Bienvenue dans votre
-                <span className="block mt-2 bg-gradient-to-r from-accent via-yellow-300 to-accent bg-clip-text text-transparent animate-gradient">
-                  Espace Académique
-                </span>
-              </h1>
-              <p className="text-white/90 text-lg max-w-md leading-relaxed">
-                Accédez à vos cours, consultez vos notes, gérez votre parcours académique et bien plus encore.
-              </p>
-              
-              <div className="grid grid-cols-2 gap-4 pt-8">
-                <div className="glass-card p-5 rounded-2xl border border-white/20 hover:scale-105 transition-transform duration-300 hover:shadow-2xl">
-                  <div className="text-3xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">24/7</div>
-                  <div className="text-white/80 text-sm mt-1">Accès continu</div>
+            <div className="space-y-4 pt-6">
+              {[
+                "Accès centralisé aux cours & ressources",
+                "Suivi en temps réel de votre progression",
+                "Assistant IA personnalisé pour vos études",
+                "Gestion simplifiée de votre scolarité"
+              ].map((text, i) => (
+                <div key={i} className="flex items-center gap-3 text-slate-300">
+                  <div className="w-6 h-6 rounded-full bg-emerald-500/10 flex items-center justify-center">
+                    <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                  </div>
+                  <span className="text-sm font-medium">{text}</span>
                 </div>
-                <div className="glass-card p-5 rounded-2xl border border-white/20 hover:scale-105 transition-transform duration-300 hover:shadow-2xl">
-                  <div className="text-3xl font-bold bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">100%</div>
-                  <div className="text-white/80 text-sm mt-1">Sécurisé</div>
-                </div>
-              </div>
+              ))}
             </div>
+          </div>
 
-            <div className="text-white/60 text-sm animate-fade-in-up delay-500">
-              © 2025 UniPortal. Tous droits réservés.
+          <div className="relative z-10 flex items-center justify-between text-slate-500 text-sm">
+            <span>© 2026 UniPortal Corporation</span>
+            <div className="flex gap-6">
+              <a href="#" className="hover:text-white transition-colors">Aide</a>
+              <a href="#" className="hover:text-white transition-colors">Confidentialité</a>
             </div>
           </div>
         </div>
 
-        {/* Right Side - Login Form */}
-        <div className="w-full lg:w-1/2 flex items-center justify-center p-8 relative">
-          {/* Animated Background - Right Side */}
-          <div className="absolute inset-0 bg-gradient-to-br from-background via-background to-primary/5">
-            {/* Subtle animated orbs */}
-            <div className="absolute top-10 right-10 w-64 h-64 bg-primary/5 rounded-full blur-3xl animate-pulse" />
-            <div className="absolute bottom-10 left-10 w-48 h-48 bg-accent/5 rounded-full blur-2xl animate-pulse delay-1000" />
-          </div>
-          
-          {/* Grid Pattern */}
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,#00000003_1px,transparent_1px),linear-gradient(to_bottom,#00000003_1px,transparent_1px)] bg-[size:2rem_2rem]" />
+        {/* Right Side: Login Form */}
+        <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12 relative">
+          {/* Subtle patterns for the form side */}
+          <div className="absolute inset-0 pointer-events-none opacity-[0.03] dark:opacity-[0.05]" 
+               style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, currentColor 1px, transparent 0)', backgroundSize: '40px 40px' }} />
 
-          <div className="w-full max-w-md relative z-10 animate-fade-in">
-            {/* Mobile Logo */}
-            <div className="lg:hidden flex items-center justify-center gap-3 mb-8 animate-fade-in-up">
-              <div className="p-2.5 rounded-xl gradient-primary animate-float">
-                <GraduationCap className="h-7 w-7 text-primary-foreground" />
-              </div>
-              <span className="font-bold text-2xl text-foreground bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                UniPortal
-              </span>
+          <div className="w-full max-w-md space-y-8 relative z-10">
+            <div className="text-center lg:text-left space-y-2">
+              <h2 className="text-4xl font-extrabold text-[#0f172a] dark:text-white tracking-tight">
+                Bon retour !
+              </h2>
+              <p className="text-slate-500 dark:text-slate-400 font-medium">
+                Veuillez entrer vos identifiants pour continuer.
+              </p>
             </div>
 
-            <Card className="border-2 border-primary/20 shadow-2xl bg-card/80 backdrop-blur-xl hover:shadow-primary/20 transition-all duration-300">
-              <CardHeader className="text-center pb-4">
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl gradient-primary mb-4 mx-auto animate-float">
-                  <Lock className="h-8 w-8 text-primary-foreground" />
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="email" className="text-sm font-bold text-slate-700 dark:text-slate-300 ml-1">
+                    Adresse Email
+                  </Label>
+                  <div className="relative group">
+                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors">
+                      <Mail className="h-5 w-5" />
+                    </div>
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="nom@universite.tn"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="input-premium pl-12 h-14 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 focus:border-primary"
+                      required
+                    />
+                  </div>
                 </div>
-                <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                  Connexion
-                </CardTitle>
-                <CardDescription className="text-base mt-2">
-                  Entrez vos identifiants pour accéder à votre espace
-                </CardDescription>
-              </CardHeader>
-              
-              <CardContent>
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="email" className="text-foreground font-semibold flex items-center gap-2">
-                      <Mail className="h-4 w-4 text-primary" />
-                      Adresse Email
+
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center ml-1">
+                    <Label htmlFor="password" className="text-sm font-bold text-slate-700 dark:text-slate-300">
+                      Mot de passe
                     </Label>
-                    <div className="relative group">
-                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                      <Input
-                        id="email"
-                        type="email"
-                        placeholder="prenom.nom@universite.tn"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="pl-12 h-14 rounded-xl bg-secondary/50 border-2 border-border focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
-                        required
-                      />
-                    </div>
+                    <Link to="/forgot-password" 
+                          className="text-xs font-bold text-primary hover:text-accent transition-colors">
+                      Oublié ?
+                    </Link>
                   </div>
-
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <Label htmlFor="password" className="text-foreground font-semibold flex items-center gap-2">
-                        <Lock className="h-4 w-4 text-primary" />
-                        Mot de Passe
-                      </Label>
-                      <Link to="/forgot-password" className="text-sm text-primary hover:text-primary/80 transition-colors font-medium">
-                        Mot de passe oublié ?
-                      </Link>
+                  <div className="relative group">
+                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors">
+                      <Lock className="h-5 w-5" />
                     </div>
-                    <div className="relative group">
-                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                      <Input
-                        id="password"
-                        type={showPassword ? "text" : "password"}
-                        placeholder="••••••••"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        className="pl-12 pr-12 h-14 rounded-xl bg-secondary/50 border-2 border-border focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
-                        required
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
-                      >
-                        {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                      </button>
-                    </div>
-                  </div>
-
-                  <Button
-                    type="submit"
-                    size="lg"
-                    className="w-full h-14 gradient-primary text-lg font-semibold hover:scale-[1.02] transition-transform duration-200 shadow-lg hover:shadow-xl"
-                    disabled={isLoading}
-                  >
-                    {isLoading ? (
-                      <div className="flex items-center gap-3">
-                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                        Connexion en cours...
-                      </div>
-                    ) : (
-                      <>
-                        Se Connecter
-                        <ArrowRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform" />
-                      </>
-                    )}
-                  </Button>
-                </form>
-
-                <div className="relative my-8">
-                  <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-border" />
-                  </div>
-                  <div className="relative flex justify-center text-sm">
-                    <span className="px-4 bg-card text-muted-foreground font-medium">ou</span>
+                    <Input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="••••••••"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="input-premium pl-12 pr-12 h-14 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 focus:border-primary"
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-primary transition-colors"
+                    >
+                      {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                    </button>
                   </div>
                 </div>
+              </div>
 
-                <Button variant="outline" size="lg" className="w-full h-14 border-2 hover:bg-secondary/50 transition-all duration-200">
-                  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/24px-Google_%22G%22_Logo.svg.png" alt="Google" className="w-5 h-5 mr-2" />
-                  Connexion avec ENT
-                </Button>
-              </CardContent>
+              <div className="flex items-center space-x-2 ml-1">
+                <input type="checkbox" id="remember" 
+                       className="rounded border-slate-300 text-primary focus:ring-primary w-4 h-4 cursor-pointer" />
+                <Label htmlFor="remember" className="text-sm text-slate-600 dark:text-slate-400 cursor-pointer font-medium">
+                  Se souvenir de moi
+                </Label>
+              </div>
 
-              <CardFooter className="justify-center pt-6">
-                <p className="text-muted-foreground text-sm">
-                  Pas encore de compte ?{" "}
-                  <Link to="/register" className="text-primary font-semibold hover:text-primary/80 transition-colors">
-                    Créer un compte
-                  </Link>
-                </p>
-              </CardFooter>
-            </Card>
+              <Button
+                type="submit"
+                className="btn-premium w-full h-14 flex items-center justify-center gap-2 text-lg shadow-xl"
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <div className="flex items-center gap-2">
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    Connexion...
+                  </div>
+                ) : (
+                  <>
+                    Se connecter
+                    <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                  </>
+                )}
+              </Button>
+            </form>
 
-            <p className="text-center text-muted-foreground text-sm mt-8 animate-fade-in-up delay-300">
-              <Link to="/" className="hover:text-primary transition-colors font-medium flex items-center justify-center gap-2">
-                <span>←</span> Retour à l'accueil
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-slate-200 dark:border-slate-800" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase tracking-widest font-bold">
+                <span className="bg-[#f8fafc] dark:bg-[#020617] px-4 text-slate-400">Ou continuer avec</span>
+              </div>
+            </div>
+
+            <Button variant="outline" className="w-full h-14 rounded-2xl border-2 border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-900 font-bold transition-all duration-300">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/1200px-Google_%22G%22_logo.svg.png" 
+                   className="w-5 h-5 mr-3" alt="Google" />
+              S'authentifier via l'ENT
+            </Button>
+
+            <p className="text-center text-slate-500 font-medium">
+              Pas encore inscrit ?{" "}
+              <Link to="/register" className="text-primary font-bold hover:underline decoration-2 underline-offset-4">
+                Créer un compte
               </Link>
             </p>
           </div>

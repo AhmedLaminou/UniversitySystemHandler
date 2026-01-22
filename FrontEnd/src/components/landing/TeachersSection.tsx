@@ -1,154 +1,142 @@
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Mail, BookOpen, GraduationCap } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Mail, BookOpen, GraduationCap, Award } from "lucide-react";
+import senghorImg from "@/assets/senghor.jpg";
+import cesaireImg from "@/assets/cesaire.avif";
+import femmeEnseignanteImg from "@/assets/femme_enseignante.jpg";
+import femmeDeuxImg from "@/assets/femme_deux.jpeg";
+import recteurImg from "@/assets/recteur.jpg";
+import adamTidjaniImg from "@/assets/AdamTidjani.jpg";
 
-// Sample teachers data - in production, this would come from an API
 const teachers = [
   {
     id: 1,
     name: "Dr. Ahmed Ben Salem",
     email: "ahmed.bensalem@university.tn",
-    photo: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
-    department: "Informatique",
-    courses: ["Architecture des Ordinateurs", "Systèmes d'Exploitation"],
-    title: "Professeur"
+    photo: recteurImg,
+    department: "Génie Informatique",
+    courses: ["Architecture des Ordinateurs", "Systèmes Distribués"],
+    specialty: "PhD. Hardware Security"
   },
   {
     id: 2,
     name: "Dr. Fatma Gharbi",
     email: "fatma.gharbi@university.tn",
-    photo: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face",
-    department: "Informatique",
-    courses: ["Génie Logiciel", "Programmation Orientée Objet"],
-    title: "Maître de Conférences"
+    photo: femmeEnseignanteImg, 
+    department: "Génie Logiciel",
+    courses: ["Développement Web", "DevOps"],
+    specialty: "PhD. Software Engineering"
   },
   {
     id: 3,
-    name: "Dr. Mohamed Trabelsi",
-    email: "mohamed.trabelsi@university.tn",
-    photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
+    name: "Dr. Mohamed Diop",
+    email: "mohamed.diop@university.sn",
+    photo: adamTidjaniImg,
     department: "Mathématiques",
     courses: ["Algèbre Linéaire", "Analyse Numérique"],
-    title: "Professeur"
+    specialty: "PhD. Applied Mathematics"
   },
   {
     id: 4,
-    name: "Dr. Sonia Mejri",
-    email: "sonia.mejri@university.tn",
-    photo: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face",
+    name: "Dr. Sonia Jallé",
+    email: "sonia.jalle@university.sn",
+    photo: femmeDeuxImg,
     department: "Informatique",
     courses: ["Bases de Données", "Big Data"],
-    title: "Maître Assistante"
+    specialty: "PhD. Data Science"
   },
   {
     id: 5,
-    name: "Dr. Karim Bouaziz",
-    email: "karim.bouaziz@university.tn",
-    photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face",
+    name: "Dr. Karim Sanogo",
+    email: "karim.sanogo@university.sn",
+    photo: senghorImg,
     department: "Réseaux",
     courses: ["Réseaux Informatiques", "Sécurité des Systèmes"],
-    title: "Professeur"
+    specialty: "PhD. Network Security"
   },
   {
     id: 6,
-    name: "Dr. Leila Hamdi",
-    email: "leila.hamdi@university.tn",
-    photo: "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=150&h=150&fit=crop&crop=face",
+    name: "Dr. Aicha Diangaré",
+    email: "aicha.diangare@university.sn",
+    photo: cesaireImg, 
     department: "Intelligence Artificielle",
     courses: ["Machine Learning", "Deep Learning"],
-    title: "Maître de Conférences"
+    specialty: "PhD. Artificial Intelligence"
   },
 ];
 
-export const TeachersSection = () => {
+const TeachersSection = () => {
   return (
-    <section className="py-20 bg-muted/30">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <Badge variant="outline" className="mb-4 px-4 py-1">
-            <GraduationCap className="w-4 h-4 mr-2" />
-            Corps Enseignant
+    <section className="py-24 relative overflow-hidden">
+      <div className="absolute inset-0 bg-primary/5 -skew-y-3 transform origin-top-left scale-110" />
+      
+      <div className="container relative z-10 mx-auto px-4">
+        <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
+          <Badge variant="outline" className="px-4 py-1.5 text-sm font-semibold border-primary/20 bg-primary/5 text-primary rounded-full">
+            <Award className="w-4 h-4 mr-2" />
+            Excellence Académique
           </Badge>
-          <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-4">
-            Nos Enseignants
+          <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
+            Nos Enseignants Chercheurs
           </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            Une équipe d'enseignants-chercheurs qualifiés et passionnés, 
-            dédiée à l'excellence académique et à l'accompagnement des étudiants.
+          <p className="text-lg text-muted-foreground leading-relaxed">
+            Une équipe pédagogique d'élite, composée d'experts internationaux et de chercheurs passionnés, dédiée à votre réussite.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {teachers.map((teacher) => (
-            <Card 
-              key={teacher.id} 
-              className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden"
-            >
-              <CardContent className="p-6">
-                <div className="flex items-start gap-4">
-                  <div className="relative">
-                    <img
-                      src={teacher.photo}
-                      alt={teacher.name}
-                      className="w-20 h-20 rounded-full object-cover ring-4 ring-primary/10 group-hover:ring-primary/30 transition-all"
-                    />
-                    <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-success rounded-full border-2 border-background" />
-                  </div>
-                  
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-foreground text-lg truncate">
-                      {teacher.name}
-                    </h3>
-                    <p className="text-sm text-primary font-medium">
-                      {teacher.title}
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      Département: {teacher.department}
-                    </p>
+            <Card key={teacher.id} className="group overflow-hidden border-none shadow-lg hover:shadow-2xl transition-all duration-300 bg-card/50 backdrop-blur-sm">
+              <CardHeader className="p-0 relative aspect-[4/3] overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10" />
+                <img 
+                  src={teacher.photo} 
+                  alt={teacher.name}
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                />
+                <div className="absolute bottom-4 left-4 right-4 z-20 text-white">
+                  <Badge className="bg-primary hover:bg-primary/90 text-white border-none mb-2">
+                    {teacher.department}
+                  </Badge>
+                  <CardTitle className="text-xl font-bold leading-tight">
+                    {teacher.name}
+                  </CardTitle>
+                  <p className="text-sm text-white/80 font-medium">
+                    {teacher.specialty}
+                  </p>
+                </div>
+              </CardHeader>
+              <CardContent className="p-6 space-y-4">
+                <div className="space-y-3">
+                  <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+                    <BookOpen className="w-4 h-4 text-primary" />
+                    Enseignements
+                  </h4>
+                  <div className="flex flex-wrap gap-2">
+                    {teacher.courses.map((course, idx) => (
+                      <Badge key={idx} variant="secondary" className="bg-secondary/50 hover:bg-secondary">
+                        {course}
+                      </Badge>
+                    ))}
                   </div>
                 </div>
 
-                <div className="mt-4 pt-4 border-t border-border">
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
-                    <Mail className="w-4 h-4 text-primary" />
-                    <a 
-                      href={`mailto:${teacher.email}`} 
-                      className="hover:text-primary transition-colors truncate"
-                    >
-                      {teacher.email}
-                    </a>
-                  </div>
-                  
-                  <div className="flex items-start gap-2">
-                    <BookOpen className="w-4 h-4 text-primary mt-0.5 shrink-0" />
-                    <div className="flex flex-wrap gap-1">
-                      {teacher.courses.map((course, idx) => (
-                        <Badge 
-                          key={idx} 
-                          variant="secondary" 
-                          className="text-xs"
-                        >
-                          {course}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
+                <div className="pt-4 border-t border-border/50 flex items-center justify-between">
+                  <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80 p-0 font-semibold">
+                    Voir Profil <GraduationCap className="w-4 h-4 ml-2" />
+                  </Button>
+                  <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-primary rounded-full hover:bg-primary/10">
+                    <Mail className="w-4 h-4" />
+                  </Button>
                 </div>
               </CardContent>
             </Card>
           ))}
         </div>
-
-        <div className="text-center mt-10">
-          <a 
-            href="/teachers" 
-            className="inline-flex items-center gap-2 text-primary hover:underline font-medium"
-          >
-            Voir tous les enseignants
-            <span aria-hidden>→</span>
-          </a>
-        </div>
       </div>
     </section>
   );
 };
+
+export default TeachersSection;

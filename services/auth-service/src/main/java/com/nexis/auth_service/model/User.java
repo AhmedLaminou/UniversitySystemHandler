@@ -17,20 +17,20 @@ import java.util.Collections;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User implements UserDetails {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     @Column(unique = true, nullable = false)
     private String username;
-    
+
     @Column(unique = true, nullable = false)
     private String email;
-    
+
     @Column(nullable = false)
     private String password;
-    
+
     private String firstName;
 
     private String lastName;
@@ -38,23 +38,25 @@ public class User implements UserDetails {
     private String phoneNumber;
 
     private String address;
-    
+
+    @Column(name = "department")
+    private String department; // e.g., "Informatique", "Mathématiques", "Droit"
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
-    
+
     @Column(nullable = false)
     private Boolean enabled = true;
-    
+
     private Long createdAt = System.currentTimeMillis();
-    
+
     private Long updatedAt = System.currentTimeMillis();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singletonList(
-            new SimpleGrantedAuthority("ROLE_" + role.name())
-        );
+                new SimpleGrantedAuthority("ROLE_" + role.name()));
     }
 
     @Override
@@ -80,7 +82,6 @@ public class User implements UserDetails {
     public String getFullName() {
         return (firstName != null ? firstName : "") + " " + (lastName != null ? lastName : "");
     }
-
 
     public Long getId() {
         return id;
@@ -179,6 +180,5 @@ public class User implements UserDetails {
     public void setUpdatedAt(Long updatedAt) {
         this.updatedAt = updatedAt;
     }
-
 
 }

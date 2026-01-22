@@ -45,30 +45,29 @@ public class AuthService {
         user.setLastName(request.getLastName());
         user.setPhoneNumber(request.getPhoneNumber());
         user.setAddress(request.getAddress());
-        user.setRole(Role.STUDENT);  // Rôle par défaut
+        user.setDepartment(request.getDepartment());
+        user.setRole(Role.STUDENT); // Rôle par défaut
         user.setEnabled(true);
 
         User savedUser = userRepository.save(user);
-        log.info("✅ Nouvel utilisateur enregistré: {} | Rôle: STUDENT", 
-            request.getUsername());
+        log.info("✅ Nouvel utilisateur enregistré: {} | Rôle: STUDENT",
+                request.getUsername());
 
         return mapToUserDto(savedUser);
     }
 
     public AuthResponse login(LoginRequest request) {
         Authentication authentication = authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(
-                request.getUsername(),
-                request.getPassword()
-            )
-        );
+                new UsernamePasswordAuthenticationToken(
+                        request.getUsername(),
+                        request.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        
+
         // Cherche d'abord par username, puis par email
         User user = userRepository.findByUsername(request.getUsername())
-            .or(() -> userRepository.findByEmail(request.getUsername()))
-            .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+                .or(() -> userRepository.findByEmail(request.getUsername()))
+                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
 
         // ✅ CHANGEMENT: Utiliser generateTokenFromUser au lieu de generateToken
         String accessToken = jwtTokenProvider.generateTokenFromUser(user);
@@ -80,9 +79,9 @@ public class AuthService {
         response.setExpiresIn(jwtTokenProvider.getJwtExpiration());
         response.setUser(mapToUserDto(user));
 
-        log.info("✅ Connexion réussie: {} (via {}) | Rôle: {}", 
-            user.getUsername(), request.getUsername(), user.getRole().name());
-        
+        log.info("✅ Connexion réussie: {} (via {}) | Rôle: {}",
+                user.getUsername(), request.getUsername(), user.getRole().name());
+
         return response;
     }
 
@@ -96,9 +95,9 @@ public class AuthService {
         }
 
         String username = jwtTokenProvider.getUsernameFromToken(token);
-        
+
         User user = userRepository.findByUsername(username)
-            .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
 
         // ✅ CHANGEMENT: Utiliser generateTokenFromUser
         String newAccessToken = jwtTokenProvider.generateTokenFromUser(user);
@@ -119,7 +118,7 @@ public class AuthService {
         String username = authentication.getName();
 
         User user = userRepository.findByUsername(username)
-            .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
 
         return mapToUserDto(user);
     }
@@ -130,7 +129,7 @@ public class AuthService {
         String username = authentication.getName();
 
         User user = userRepository.findByUsername(username)
-            .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
 
         if (userDto.getFirstName() != null) {
             user.setFirstName(userDto.getFirstName());
@@ -144,6 +143,9 @@ public class AuthService {
         if (userDto.getAddress() != null) {
             user.setAddress(userDto.getAddress());
         }
+        if (userDto.getDepartment() != null) {
+            user.setDepartment(userDto.getDepartment());
+        }
         user.setUpdatedAt(System.currentTimeMillis());
 
         User updated = userRepository.save(user);
@@ -153,16 +155,16 @@ public class AuthService {
 
     public UserDto mapToUserDto(User user) {
         return new UserDto(
-            user.getId(),
-            user.getUsername(),
-            user.getEmail(),
-            user.getFirstName(),
-            user.getLastName(),
-            user.getPhoneNumber(),
-            user.getAddress(),
-            user.getRole(),
-            user.getEnabled(),
-            user.getCreatedAt()
-        );
+                user.getId(),
+                user.getUsername(),
+                user.getEmail(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getPhoneNumber(),
+                user.getAddress(),
+                user.getDepartment(),
+                user.getRole(),
+                user.getEnabled(),
+                user.getCreatedAt());
     }
 }
