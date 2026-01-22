@@ -111,7 +111,7 @@ export const HeroSection = () => {
               <div className="w-12 h-12 rounded-full neon-border-purple bg-gradient-to-br from-purple-500/20 to-magenta-500/20 flex items-center justify-center">
                 <span className="neon-text-purple font-extrabold text-lg">#1</span>
               </div>
-              <span className="text-sm font-semibold text-foreground">Top Université<br/>au Sénégal</span>
+              <span className="text-sm font-semibold text-foreground">Top Université<br/>au Sén</span>
             </div>
           </div>
         </div>
