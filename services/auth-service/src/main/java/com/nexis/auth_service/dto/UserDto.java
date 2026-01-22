@@ -16,6 +16,7 @@ public class UserDto {
     private String lastName;
     private String phoneNumber;
     private String address;
+    private String department;
     private Role role;
     private Boolean enabled;
     private Long createdAt;

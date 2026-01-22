@@ -41,7 +41,8 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:5173", "http://localhost:5174", "http://127.0.0.1:5173", "http://127.0.0.1:5174"));
+        configuration.setAllowedOrigins(List.of("http://localhost:5173", "http://localhost:5174",
+                "http://localhost:5200", "http://127.0.0.1:5173", "http://127.0.0.1:5174", "http://127.0.0.1:5200"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
@@ -68,33 +69,35 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         log.info("🔐 Configuring Spring Security for Auth-Service");
-        
+
         http
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .csrf(csrf -> csrf.disable())
-            
-            .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            
-            .authorizeHttpRequests(authz -> authz
-                // Endpoints publics du service auth
-                .requestMatchers("/auth/register", "/auth/login", "/auth/refresh", "/auth/validate", "/auth/health").permitAll()
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .csrf(csrf -> csrf.disable())
 
-                // Endpoints qui nécessitent un JWT
-                .requestMatchers("/auth/me", "/auth/profile", "/auth/logout", "/auth/student-requests/**").authenticated()
+                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
-                // Outillage et supervision
-                .requestMatchers("/h2-console/**").permitAll()
-                .requestMatchers("/actuator/**").permitAll()
-                .requestMatchers("/swagger-ui/**").permitAll()
-                .requestMatchers("/v3/api-docs/**").permitAll()
+                .authorizeHttpRequests(authz -> authz
+                        // Endpoints publics du service auth
+                        .requestMatchers("/auth/register", "/auth/login", "/auth/refresh", "/auth/validate",
+                                "/auth/health")
+                        .permitAll()
 
-                // Toute autre route est sécurisée par défaut
-                .anyRequest().authenticated()
-            )
-            
-            .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()))
-            
-            .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+                        // Endpoints qui nécessitent un JWT
+                        .requestMatchers("/auth/me", "/auth/profile", "/auth/logout", "/auth/student-requests/**")
+                        .authenticated()
+
+                        // Outillage et supervision
+                        .requestMatchers("/h2-console/**").permitAll()
+                        .requestMatchers("/actuator/**").permitAll()
+                        .requestMatchers("/swagger-ui/**").permitAll()
+                        .requestMatchers("/v3/api-docs/**").permitAll()
+
+                        // Toute autre route est sécurisée par défaut
+                        .anyRequest().authenticated())
+
+                .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()))
+
+                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         log.info("✅ Spring Security configured successfully");
         return http.build();
@@ -122,19 +125,17 @@ class JwtAuthenticationFilter extends OncePerRequestFilter {
                 String username = tokenProvider.getUsernameFromToken(token);
                 var userDetails = userDetailsService.loadUserByUsername(username);
 
-                UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities()
-                    );
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                        userDetails, null, userDetails.getAuthorities());
 
                 // Ajouter au contexte de sécurité
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-                
+
                 log.debug("✅ JWT validated for user: {}", username);
             } else if (token != null) {
                 log.warn("❌ Invalid JWT token");
             }
-            
+
         } catch (Exception e) {
             log.error("❌ JWT authentication error: {}", e.getMessage());
         }
@@ -142,14 +143,13 @@ class JwtAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-
     private String extractToken(HttpServletRequest request) {
         String authHeader = request.getHeader("Authorization");
-        
+
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             return authHeader.substring(7);
         }
-        
+
         return null;
     }
 }

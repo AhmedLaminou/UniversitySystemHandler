@@ -23,6 +23,7 @@ services:
       POSTGRES_DB: grade_db
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./services/postgres-init:/docker-entrypoint-initdb.d
     networks:
       - soa-network
 
@@ -165,7 +166,7 @@ services:
     build: ./FrontEnd
     container_name: soa-frontend
     ports:
-      - "5200:5200"
+      - "5173:5200"
     depends_on:
       - auth-service
       - student-service
@@ -174,6 +175,21 @@ services:
       - course-service
       - payment-service
       - notification-service
+      - ai-service
+    networks:
+      - soa-network
+
+  ai-service:
+    build: ./services/ai-service
+    container_name: soa-ai-service
+    ports:
+      - "8086:8086"
+    environment:
+      PORT: 8086
+      OPEN_ROUTER_KEY: ${OPEN_ROUTER_KEY}
+      STUDENT_SERVICE_URL: http://student-service:3000
+      COURSE_SERVICE_URL: http://course-service:8082
+      GRADE_SERVICE_URL: http://grade-service:8000
     networks:
       - soa-network
 
@@ -182,13 +198,14 @@ services:
     image: postgres:15
     container_name: soa-postgres-payment
     ports:
-      - "5433:5432"
+      - "5431:5432"
     environment:
       POSTGRES_USER: payment_user
       POSTGRES_PASSWORD: payment_pass
       POSTGRES_DB: payment_db
     volumes:
       - postgres_payment_data:/var/lib/postgresql/data
+      - ./services/postgres-payment-init:/docker-entrypoint-initdb.d
     networks:
       - soa-network
 

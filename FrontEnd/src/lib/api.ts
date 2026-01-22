@@ -1,11 +1,13 @@
+
 // ============================================================================
 // SERVICE BASE URLs
 // ============================================================================
 const AUTH_BASE_URL = "http://localhost:8080";
 const STUDENT_BASE_URL = "http://localhost:3000";
-const GRADE_BASE_URL = "http://localhost:8000";
+const GRADE_SERVICE_URL = "http://localhost:8000";
 const BILLING_BASE_URL = "http://localhost:8081";
 const COURSE_BASE_URL = "http://localhost:8082";
+const AI_SERVICE_URL = "http://localhost:8086/api/v1";
 
 // ============================================================================
 // TYPE DEFINITIONS
@@ -810,5 +812,59 @@ export async function fetchGradeHealth() {
   const res = await fetch(`${GRADE_BASE_URL}/health`).catch(() => null);
   return { status: res && res.ok ? "UP" : "DOWN" };
 }
+
+
+// ============================================================================
+// CONSOLIDATED API EXPORT (including AI)
+// ============================================================================
+
+export const api = {
+  ai: {
+    chat: async (message: string, userId: string): Promise<string> => {
+      try {
+        const response = await fetch(`${AI_SERVICE_URL}/agent/chat`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message, user_id: userId }),
+        });
+        const data = await response.json();
+        return data.response;
+      } catch (error) {
+        console.error("AI Chat Error:", error);
+        return "Sorry, I am having trouble connecting to the AI brain right now.";
+      }
+    },
+    
+    courseChat: async (courseId: string, query: string): Promise<string> => {
+      try {
+        const response = await fetch(`${AI_SERVICE_URL}/course-ai/rag/chat`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ course_id: courseId, query }),
+        });
+        const data = await response.json();
+        return data.response;
+      } catch (error) {
+         console.error("Course AI Error:", error);
+         return "I couldn't analyze the course materials at this moment.";
+      }
+    },
+
+    generateQuiz: async (courseId: string): Promise<string> => {
+      try {
+        const response = await fetch(`${AI_SERVICE_URL}/course-ai/rag/quiz`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ course_id: courseId, num_questions: 5 }),
+        });
+        const data = await response.json();
+        return data.response;
+      } catch (error) {
+        console.error("Quiz Gen Error:", error);
+        return "Failed to generate quiz.";
+      }
+    }
+  }
+};
 
 

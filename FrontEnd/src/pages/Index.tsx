@@ -2,9 +2,10 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { HeroSection } from "@/components/landing/HeroSection";
 import { StatsSection } from "@/components/landing/StatsSection";
-import { TeachersSection } from "@/components/landing/TeachersSection";
+import TeachersSection from "@/components/landing/TeachersSection";
 import { NewsSection } from "@/components/landing/NewsSection";
 import { PartnersSection } from "@/components/landing/PartnersSection";
+import { ThemeSwitcher } from "@/components/ThemeSwitcher";
 import { Helmet } from "react-helmet-async";
 
 const Index = () => {
@@ -25,6 +26,7 @@ const Index = () => {
           <PartnersSection />
         </main>
         <Footer />
+        <ThemeSwitcher />
       </div>
     </>
   );
